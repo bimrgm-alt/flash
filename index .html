@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>漢字 · Kanji Flash</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0D0D0D;
+    --surface: #1A1A1A;
+    --surface2: #222222;
+    --surface3: #2C2C2E;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.13);
+    --accent: #0A84FF;
+    --accent2: #30D158;
+    --accent3: #FF9F0A;
+    --red: #FF453A;
+    --text: #FFFFFF;
+    --text2: rgba(255,255,255,0.60);
+    --text3: rgba(255,255,255,0.35);
+    --card-front-top: #1C1C1E;
+    --card-front-bot: #161618;
+    --card-back-top: #0F1B2D;
+    --card-back-bot: #0A1520;
+    --card-shadow: 0 24px 60px rgba(0,0,0,0.75), 0 8px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07);
+    --radius: 44px;
+    --font-body: 'Noto Sans', -apple-system, 'Helvetica Neue', sans-serif;
+    --font-jp: 'Noto Sans JP', -apple-system, 'Helvetica Neue', sans-serif;
+    --easing: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-ios: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%; background: #000;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    user-select: none; overflow: hidden;
+  }
+
+  /* ── iPhone Shell ── */
+  .iphone {
+    position: relative; width: 390px; height: 844px;
+    background: #1A1A1A; border-radius: var(--radius);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 0 0 10px #111,
+      0 0 0 12px rgba(255,255,255,0.08), 0 60px 120px rgba(0,0,0,0.9),
+      0 20px 40px rgba(0,0,0,0.6);
+    overflow: hidden; flex-shrink: 0;
+  }
+  .iphone::before {
+    content: ''; position: absolute; left: -13px; top: 120px;
+    width: 4px; height: 32px; background: #2A2A2A; border-radius: 2px 0 0 2px;
+    box-shadow: 0 45px 0 #2A2A2A, 0 90px 0 #2A2A2A, 0 135px 0 #2A2A2A;
+  }
+  .iphone::after {
+    content: ''; position: absolute; right: -13px; top: 160px;
+    width: 4px; height: 64px; background: #2A2A2A; border-radius: 0 2px 2px 0;
+  }
+
+  /* ── Screen ── */
+  .screen {
+    position: absolute; inset: 0; background: var(--bg);
+    border-radius: calc(var(--radius) - 1px);
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .screen::before {
+    content: ''; position: absolute; top: -200px; left: -100px;
+    width: 600px; height: 500px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(10,132,255,0.12) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ── Dynamic Island ── */
+  .dynamic-island {
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    width: 126px; height: 37px; background: #000; border-radius: 20px;
+    z-index: 100; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 1.5px rgba(255,255,255,0.06);
+  }
+  .di-camera { width: 11px; height: 11px; background: #1A1A1A; border-radius: 50%; position: relative; }
+  .di-camera::after { content: ''; position: absolute; inset: 3px; background: rgba(60,60,180,0.4); border-radius: 50%; }
+
+  /* ── Status Bar ── */
+  .status-bar {
+    position: relative; z-index: 10; padding: 58px 28px 0;
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  }
+  .status-time { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { fill: var(--text); }
+
+  /* ── App Header ── */
+  .app-header { position: relative; z-index: 10; padding: 18px 28px 0; flex-shrink: 0; }
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+  .header-left { display: flex; flex-direction: column; }
+  .app-title { font-family: var(--font-jp); font-size: 28px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
+  .app-subtitle { font-size: 12px; color: var(--text3); letter-spacing: 0.8px; text-transform: uppercase; font-weight: 500; }
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .header-badge {
+    background: var(--surface3); border: 1px solid var(--border2); border-radius: 12px;
+    padding: 6px 12px; font-size: 12px; color: var(--text2); font-weight: 500;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .badge-dot { width: 6px; height: 6px; background: var(--accent2); border-radius: 50%; }
+
+  /* ⚙ Settings button */
+  .settings-btn {
+    width: 36px; height: 36px; background: var(--surface3);
+    border: 1px solid var(--border2); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.22s var(--ease-ios); flex-shrink: 0;
+  }
+  .settings-btn:active { transform: scale(0.86); background: var(--surface2); }
+  .settings-btn svg { transition: transform 0.55s var(--ease-ios); }
+  .settings-btn:active svg { transform: rotate(70deg); }
+
+  /* ── Progress ── */
+  .progress-wrap { padding: 14px 28px 0; flex-shrink: 0; position: relative; z-index: 10; }
+  .progress-meta { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .progress-label { font-size: 11px; color: var(--text3); font-weight: 500; letter-spacing: 0.4px; text-transform: uppercase; }
+  .progress-count { font-size: 11px; color: var(--accent); font-weight: 600; }
+  .progress-track { height: 3px; background: var(--surface3); border-radius: 2px; overflow: hidden; }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent), #5E9EFF);
+    border-radius: 2px; transition: width 0.45s var(--ease-ios); position: relative;
+  }
+  .progress-fill::after {
+    content: ''; position: absolute; right: 0; top: -2px;
+    width: 7px; height: 7px; background: #5E9EFF; border-radius: 50%;
+    box-shadow: 0 0 8px rgba(94,158,255,0.8);
+  }
+
+  /* ── Card Stage ── */
+  .card-stage {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 24px 28px; perspective: 1200px; position: relative; z-index: 5;
+  }
+  .card-ghost {
+    position: absolute; width: 310px; height: 420px; border-radius: 28px;
+    background: var(--surface); border: 1px solid var(--border);
+    transform-origin: center bottom; pointer-events: none;
+  }
+  .card-ghost-1 { transform: translateY(10px) scale(0.93); opacity: 0.35; }
+  .card-ghost-2 { transform: translateY(5px) scale(0.965); opacity: 0.55; }
+
+  .card-container {
+    width: 100%; height: 100%; max-width: 334px; max-height: 460px;
+    position: relative; cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.34, 1.20, 0.64, 1);
+  }
+  .card-container.flipped { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute; inset: 0; border-radius: 28px;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .card-face::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; opacity: 0.5; border-radius: 28px;
+  }
+  .card-front {
+    background: linear-gradient(160deg, var(--card-front-top) 0%, var(--card-front-bot) 100%);
+    border: 1px solid var(--border2);
+    box-shadow: var(--card-shadow), inset 0 1px 0 rgba(255,255,255,0.09);
+  }
+  .card-back {
+    background: linear-gradient(160deg, var(--card-back-top) 0%, var(--card-back-bot) 100%);
+    border: 1px solid rgba(10,132,255,0.18);
+    box-shadow: var(--card-shadow), 0 0 40px rgba(10,132,255,0.08), inset 0 1px 0 rgba(10,132,255,0.15);
+    transform: rotateY(180deg);
+  }
+
+  .front-top { padding: 22px 24px 0; display: flex; align-items: center; justify-content: space-between; }
+  .jlpt-badge {
+    background: rgba(255,159,10,0.15); border: 1px solid rgba(255,159,10,0.3);
+    border-radius: 8px; padding: 4px 9px; font-size: 10px; font-weight: 700;
+    color: var(--accent3); letter-spacing: 0.8px;
+  }
+  .card-num { font-size: 11px; color: var(--text3); font-weight: 500; }
+  .kanji-wrap {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 0 24px; gap: 10px;
+  }
+  .kanji-char {
+    font-family: var(--font-jp); font-size: 120px; font-weight: 700;
+    color: var(--text); line-height: 1;
+    text-shadow: 0 0 60px rgba(10,132,255,0.18), 0 4px 24px rgba(0,0,0,0.6);
+    letter-spacing: -3px;
+  }
+  .kanji-reading { font-family: var(--font-jp); font-size: 16px; color: var(--text3); font-weight: 400; letter-spacing: 1px; }
+  .front-bottom { padding: 16px 24px 22px; display: flex; align-items: center; gap: 8px; }
+  .tap-hint { font-size: 12px; color: var(--text3); display: flex; align-items: center; gap: 5px; }
+  .tap-icon {
+    width: 26px; height: 26px; background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; font-size: 13px;
+  }
+
+  .back-inner { flex: 1; display: flex; flex-direction: column; padding: 22px 24px 20px; overflow: hidden; }
+  .back-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .back-kanji-mini { font-family: var(--font-jp); font-size: 38px; font-weight: 700; color: rgba(255,255,255,0.9); line-height: 1; text-shadow: 0 0 30px rgba(10,132,255,0.35); }
+  .answer-chip {
+    background: rgba(48,209,88,0.15); border: 1px solid rgba(48,209,88,0.3);
+    border-radius: 10px; padding: 5px 10px; font-size: 10px; font-weight: 700;
+    color: var(--accent2); letter-spacing: 0.7px; text-transform: uppercase;
+  }
+  .meaning-section { margin-bottom: 14px; }
+  .section-label { font-size: 9px; font-weight: 700; color: var(--text3); letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 5px; }
+  .meaning-text { font-size: 22px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; line-height: 1.2; }
+  .divider { height: 1px; background: var(--border); margin: 12px 0; }
+  .readings-row { display: flex; gap: 10px; margin-bottom: 14px; }
+  .reading-block { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 14px; padding: 10px 12px; }
+  .reading-type { font-size: 9px; font-weight: 700; color: var(--text3); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 4px; }
+  .reading-val { font-family: var(--font-jp); font-size: 17px; font-weight: 500; color: var(--accent); letter-spacing: 1px; }
+  .reading-val.kunyomi { color: #BF8AFF; }
+  .example-block { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 14px; padding: 11px 14px; flex: 1; min-height: 0; }
+  .example-jp { font-family: var(--font-jp); font-size: 15px; font-weight: 500; color: rgba(255,255,255,0.85); margin-bottom: 3px; letter-spacing: 0.5px; }
+  .example-np { font-size: 11px; color: var(--text3); line-height: 1.4; }
+
+  /* ── Bottom Nav ── */
+  .bottom-nav { flex-shrink: 0; position: relative; z-index: 10; padding: 0 20px 34px; }
+  .nav-glass {
+    background: rgba(28,28,30,0.78);
+    backdrop-filter: blur(28px) saturate(1.8); -webkit-backdrop-filter: blur(28px) saturate(1.8);
+    border: 1px solid var(--border2); border-radius: 26px; padding: 10px 8px;
+    display: flex; align-items: center; justify-content: space-around;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+  .nav-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 8px 16px; border-radius: 18px; border: none; background: transparent;
+    cursor: pointer; transition: all 0.22s var(--ease-ios); -webkit-tap-highlight-color: transparent;
+  }
+  .nav-btn:active { transform: scale(0.88); background: rgba(255,255,255,0.06); }
+  .nav-label { font-size: 9.5px; font-weight: 600; color: var(--text3); transition: color 0.2s; }
+  .nav-btn:active .nav-label { color: var(--accent); }
+  .nav-center-btn { background: var(--accent); padding: 10px 22px; border-radius: 20px; box-shadow: 0 4px 20px rgba(10,132,255,0.45); }
+  .nav-center-btn:active { transform: scale(0.88); background: #0070E0; }
+  .nav-center-btn .nav-label { color: rgba(255,255,255,0.9) !important; }
+
+  /* ── Toast ── */
+  .toast {
+    position: absolute; bottom: 140px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(44,44,46,0.92); backdrop-filter: blur(20px);
+    border: 1px solid var(--border2); border-radius: 14px;
+    padding: 9px 18px; font-size: 13px; color: var(--text2); font-weight: 500;
+    white-space: nowrap; opacity: 0; transition: all 0.3s var(--ease-ios);
+    pointer-events: none; z-index: 50;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── Keyframes ── */
+  @keyframes slideInRight { from{opacity:0;transform:translateX(36px) scale(0.95);}to{opacity:1;transform:none;} }
+  @keyframes slideInLeft  { from{opacity:0;transform:translateX(-36px) scale(0.95);}to{opacity:1;transform:none;} }
+  @keyframes bounceIn     { 0%{transform:scale(0.85) rotate(-3deg);opacity:0;} 60%{transform:scale(1.04);opacity:1;} 100%{transform:none;opacity:1;} }
+  @keyframes sheetUp      { from{transform:translateY(100%);}to{transform:translateY(0);} }
+  @keyframes sheetDown    { from{transform:translateY(0);}to{transform:translateY(100%);} }
+  @keyframes overlayIn    { from{opacity:0;}to{opacity:1;} }
+  @keyframes overlayOut   { from{opacity:1;}to{opacity:0;} }
+  @keyframes rowIn        { from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:none;} }
+
+  .card-anim-in-right { animation: slideInRight 0.32s var(--ease-ios) forwards; }
+  .card-anim-in-left  { animation: slideInLeft  0.32s var(--ease-ios) forwards; }
+  .card-anim-bounce   { animation: bounceIn     0.45s var(--easing) forwards; }
+
+  /* ═══════════════════════════════════
+     SETTINGS SHEET
+  ═══════════════════════════════════ */
+  .sheet-overlay {
+    position: absolute; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    display: none;
+  }
+  .sheet-overlay.visible { display: block; animation: overlayIn 0.25s ease forwards; }
+  .sheet-overlay.hiding  { animation: overlayOut 0.28s ease forwards; }
+
+  .settings-sheet {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: #1C1C1E; border-radius: 28px 28px 0 0;
+    border-top: 1px solid var(--border2);
+    display: flex; flex-direction: column;
+    max-height: 88%;
+    box-shadow: 0 -20px 60px rgba(0,0,0,0.7);
+    overflow: hidden;
+  }
+  .sheet-overlay.visible .settings-sheet { animation: sheetUp   0.36s cubic-bezier(0.32,0.72,0,1) forwards; }
+  .sheet-overlay.hiding  .settings-sheet { animation: sheetDown 0.28s cubic-bezier(0.32,0.72,0,1) forwards; }
+
+  .sheet-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin: 10px auto 0; flex-shrink: 0; }
+
+  .sheet-header { padding: 16px 20px 0; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .sheet-title { font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+  .sheet-close-btn {
+    width: 30px; height: 30px; background: var(--surface3); border: none; border-radius: 50%;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: var(--text2); font-size: 16px; font-weight: 600;
+    transition: all 0.18s var(--ease-ios);
+  }
+  .sheet-close-btn:active { transform: scale(0.86); }
+
+  /* Segment */
+  .seg-control { margin: 14px 20px 0; background: var(--surface3); border-radius: 10px; padding: 3px; display: flex; flex-shrink: 0; }
+  .seg-btn {
+    flex: 1; padding: 7px 0; border: none; background: transparent;
+    border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--text3);
+    cursor: pointer; transition: all 0.22s var(--ease-ios);
+  }
+  .seg-btn.active { background: #3A3A3C; color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+
+  /* Form */
+  .form-scroll { flex: 1; overflow-y: auto; padding: 16px 20px 24px; }
+  .form-scroll::-webkit-scrollbar { display: none; }
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: 0.9px; text-transform: uppercase; margin-bottom: 7px; display: block; }
+  .form-input {
+    width: 100%; background: var(--surface3); border: 1px solid var(--border2);
+    border-radius: 12px; padding: 12px 14px; font-size: 15px;
+    font-family: var(--font-body); color: var(--text); outline: none;
+    transition: border-color 0.2s; -webkit-appearance: none;
+  }
+  .form-input:focus { border-color: var(--accent); }
+  .form-input::placeholder { color: var(--text3); }
+  .form-input.kanji-input { font-family: var(--font-jp); font-size: 28px; text-align: center; padding: 14px; }
+  .form-row { display: flex; gap: 10px; }
+  .form-row .form-group { flex: 1; }
+  .form-select {
+    width: 100%; background: var(--surface3); border: 1px solid var(--border2);
+    border-radius: 12px; padding: 12px 14px; font-size: 15px;
+    font-family: var(--font-body); color: var(--text); outline: none;
+    -webkit-appearance: none; appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.3)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center;
+  }
+  .form-select option { background: #2C2C2E; }
+  .form-hint { font-size: 10px; color: var(--text3); margin-top: 5px; line-height: 1.4; }
+  .add-btn {
+    width: 100%; padding: 15px; background: var(--accent); border: none; border-radius: 14px;
+    font-size: 15px; font-weight: 600; color: #fff; cursor: pointer;
+    transition: all 0.22s var(--ease-ios); margin-top: 4px;
+    box-shadow: 0 4px 16px rgba(10,132,255,0.35);
+  }
+  .add-btn:active { transform: scale(0.97); background: #0070E0; }
+
+  /* Card list */
+  .list-header { padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .list-count { font-size: 12px; color: var(--text3); font-weight: 500; }
+  .reset-btn {
+    background: rgba(255,69,58,0.12); border: 1px solid rgba(255,69,58,0.25);
+    border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 600;
+    color: var(--red); cursor: pointer; transition: all 0.18s var(--ease-ios);
+  }
+  .reset-btn:active { transform: scale(0.92); }
+  .card-list { flex: 1; overflow-y: auto; padding: 0 20px 24px; }
+  .card-list::-webkit-scrollbar { display: none; }
+  .card-row {
+    background: var(--surface3); border: 1px solid var(--border); border-radius: 14px;
+    padding: 12px 14px; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 12px;
+    animation: rowIn 0.25s var(--ease-ios) both;
+  }
+  .card-row-kanji { font-family: var(--font-jp); font-size: 28px; font-weight: 700; color: var(--text); width: 38px; text-align: center; flex-shrink: 0; }
+  .card-row-info { flex: 1; min-width: 0; }
+  .card-row-meaning { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-row-sub { font-size: 11px; color: var(--text3); }
+  .card-row-tag { background: rgba(255,159,10,0.12); border: 1px solid rgba(255,159,10,0.25); border-radius: 6px; padding: 2px 7px; font-size: 9px; font-weight: 700; color: var(--accent3); flex-shrink: 0; }
+  .card-row-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .row-btn {
+    width: 30px; height: 30px; border-radius: 9px; border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 14px; transition: all 0.18s var(--ease-ios);
+  }
+  .row-btn:active { transform: scale(0.86); }
+  .edit-btn  { background: rgba(10,132,255,0.12); }
+  .delete-btn{ background: rgba(255,69,58,0.12); }
+
+  .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; gap: 10px; }
+  .empty-emoji { font-size: 40px; }
+  .empty-text { font-size: 14px; color: var(--text3); text-align: center; line-height: 1.5; }
+
+  /* Edit modal (slides in from right inside sheet) */
+  .edit-modal {
+    position: absolute; inset: 0; background: #1C1C1E; border-radius: 28px 28px 0 0;
+    display: flex; flex-direction: column;
+    transform: translateX(110%);
+    transition: transform 0.32s cubic-bezier(0.32,0.72,0,1);
+    z-index: 5;
+  }
+  .edit-modal.open { transform: translateX(0); }
+  .edit-modal-header {
+    padding: 20px 20px 0;
+    display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+  }
+  .back-btn {
+    display: flex; align-items: center; gap: 4px; background: none; border: none;
+    color: var(--accent); font-size: 14px; font-weight: 500; cursor: pointer; padding: 6px 0;
+  }
+  .back-btn:active { opacity: 0.6; }
+  .edit-modal-title { font-size: 16px; font-weight: 700; color: var(--text); }
+  .save-btn {
+    margin-left: auto; background: var(--accent); border: none; border-radius: 10px;
+    padding: 7px 14px; font-size: 13px; font-weight: 600; color: #fff;
+    cursor: pointer; transition: all 0.18s var(--ease-ios);
+  }
+  .save-btn:active { transform: scale(0.92); background: #0070E0; }
+
+  @media (max-height: 860px) { .iphone { height: 780px; } .kanji-char { font-size: 96px; } }
+  @media (max-width: 420px) { .iphone { width: 100vw; border-radius: 0; box-shadow: none; } .screen { border-radius: 0; } }
+  ::-webkit-scrollbar { display: none; }
+</style>
+</head>
+<body>
+
+<div class="iphone">
+<div class="screen">
+
+  <div class="dynamic-island"><div class="di-camera"></div></div>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <div class="status-time" id="clock">9:41</div>
+    <div class="status-icons">
+      <svg width="17" height="12" viewBox="0 0 17 12"><rect x="0" y="6" width="3" height="6" rx="1" opacity="0.4"/><rect x="4" y="4" width="3" height="8" rx="1" opacity="0.6"/><rect x="8" y="2" width="3" height="10" rx="1" opacity="0.8"/><rect x="12" y="0" width="3" height="12" rx="1"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12"><circle cx="8" cy="11" r="1.5"/><path d="M3.5 7C5 5.4 6.4 4.5 8 4.5s3 .9 4.5 2.5" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.8"/><path d="M1 4.2C3 2.1 5.4 1 8 1s5 1.1 7 3.2" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="21" height="10" rx="2.5" stroke="white" stroke-width="1" fill="none" opacity="0.5"/><rect x="21.5" y="3.5" width="2" height="5" rx="1" fill="white" opacity="0.4"/><rect x="1.5" y="2.5" width="17" height="7" rx="1.5" fill="white"/></svg>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="app-header">
+    <div class="header-top">
+      <div class="header-left">
+        <div class="app-title">漢字フラッシュ</div>
+        <div class="app-subtitle">Kanji Flash · JLPT Study</div>
+      </div>
+      <div class="header-right">
+        <div class="header-badge">
+          <div class="badge-dot"></div>
+          <span id="studied-count">0</span> done
+        </div>
+        <div class="settings-btn" onclick="openSettings()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span class="progress-label">Progress</span>
+      <span class="progress-count" id="progress-text">1 / 10</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:10%"></div>
+    </div>
+  </div>
+
+  <!-- Card Stage -->
+  <div class="card-stage">
+    <div class="card-ghost card-ghost-1"></div>
+    <div class="card-ghost card-ghost-2"></div>
+    <div class="card-container" id="cardContainer">
+      <!-- Front -->
+      <div class="card-face card-front">
+        <div class="front-top">
+          <div class="jlpt-badge" id="jlptBadge">N3</div>
+          <div class="card-num" id="cardNum">01 / 10</div>
+        </div>
+        <div class="kanji-wrap">
+          <div class="kanji-char" id="kanjiChar">愛</div>
+          <div class="kanji-reading" id="kanjiReading">あい</div>
+        </div>
+        <div class="front-bottom">
+          <div class="tap-icon">👆</div>
+          <span class="tap-hint">Tap to reveal</span>
+        </div>
+      </div>
+      <!-- Back -->
+      <div class="card-face card-back">
+        <div class="back-inner">
+          <div class="back-header">
+            <div class="back-kanji-mini" id="backKanji">愛</div>
+            <div class="answer-chip">Meaning</div>
+          </div>
+          <div class="meaning-section">
+            <div class="section-label">Meaning</div>
+            <div class="meaning-text" id="meaningText">माया / प्रेम</div>
+          </div>
+          <div class="divider"></div>
+          <div class="readings-row">
+            <div class="reading-block">
+              <div class="reading-type">Onyomi</div>
+              <div class="reading-val" id="onyomi">アイ</div>
+            </div>
+            <div class="reading-block">
+              <div class="reading-type">Kunyomi</div>
+              <div class="reading-val kunyomi" id="kunyomi">いと・しい</div>
+            </div>
+          </div>
+          <div class="example-block">
+            <div class="section-label">Example</div>
+            <div class="example-jp" id="exampleJp">愛情 (あいじょう)</div>
+            <div class="example-np" id="exampleNp">प्रेम / स्नेह — affection</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-glass">
+      <button class="nav-btn" onclick="navigate(-1)">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M14 5l-7 6 7 6" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="5" width="2" height="12" rx="1" fill="rgba(255,255,255,0.5)"/></svg>
+        <span class="nav-label">Prev</span>
+      </button>
+      <button class="nav-btn nav-center-btn" onclick="flipCard()">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11C3 7.13 6.13 4 10 4h9M19 4l-3-3M19 4l-3 3M19 11c0 3.87-3.13 7-7 7H3M3 18l3 3M3 18l3-3"/></svg>
+        <span class="nav-label">Flip</span>
+      </button>
+      <button class="nav-btn" onclick="shuffle()">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 7h3l9 8h4M19 7h-4l-3 2.67M19 15h-4l-9-8H3M16 5l3 2-3 2M16 13l3 2-3 2" stroke="rgba(255,255,255,0.5)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="nav-label">Shuffle</span>
+      </button>
+      <button class="nav-btn" onclick="navigate(1)">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M8 5l7 6-7 6" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="17" y="5" width="2" height="12" rx="1" fill="rgba(255,255,255,0.5)"/></svg>
+        <span class="nav-label">Next</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SETTINGS SHEET
+  ═══════════════════════════════════ -->
+  <div class="sheet-overlay" id="settingsOverlay" onclick="overlayClick(event)">
+    <div class="settings-sheet" id="settingsSheet">
+      <div class="sheet-handle"></div>
+
+      <div class="sheet-header">
+        <div class="sheet-title">⚙︎ Card Settings</div>
+        <button class="sheet-close-btn" onclick="closeSettings()">✕</button>
+      </div>
+
+      <!-- Segment control -->
+      <div class="seg-control">
+        <button class="seg-btn active" id="seg-add"    onclick="switchTab('add')">＋ Add Card</button>
+        <button class="seg-btn"        id="seg-manage" onclick="switchTab('manage')">Manage Deck</button>
+      </div>
+
+      <!-- ADD TAB -->
+      <div id="tab-add" class="form-scroll">
+        <div class="form-group">
+          <label class="form-label">Kanji / Front Character</label>
+          <input class="form-input kanji-input" id="f-kanji" type="text" placeholder="愛" maxlength="6"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Reading (Hiragana / Romaji)</label>
+          <input class="form-input" id="f-reading" type="text" placeholder="あい"/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">JLPT Level</label>
+            <select class="form-select" id="f-jlpt">
+              <option>N5</option><option>N4</option>
+              <option selected>N3</option><option>N2</option><option>N1</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Onyomi</label>
+            <input class="form-input" id="f-onyomi" type="text" placeholder="アイ"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kunyomi</label>
+          <input class="form-input" id="f-kunyomi" type="text" placeholder="いと・しい"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Meaning (your language) *</label>
+          <input class="form-input" id="f-meaning" type="text" placeholder="माया / प्रेम"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Example Word (Japanese)</label>
+          <input class="form-input" id="f-exjp" type="text" placeholder="愛情 (あいじょう)"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Example Translation</label>
+          <input class="form-input" id="f-exnp" type="text" placeholder="प्रेम — affection"/>
+          <div class="form-hint">* Kanji and Meaning are required. All other fields are optional.</div>
+        </div>
+        <button class="add-btn" onclick="addCard()">Add to Deck</button>
+      </div>
+
+      <!-- MANAGE TAB -->
+      <div id="tab-manage" style="display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden;">
+        <div class="list-header">
+          <span class="list-count" id="list-count">0 cards</span>
+          <button class="reset-btn" onclick="confirmReset()">Reset to Default</button>
+        </div>
+        <div class="card-list" id="cardList"></div>
+      </div>
+
+      <!-- EDIT MODAL (slides over the sheet) -->
+      <div class="edit-modal" id="editModal">
+        <div class="edit-modal-header">
+          <button class="back-btn" onclick="closeEditModal()">
+            <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M8 1L1 7.5 8 14" stroke="#0A84FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Back
+          </button>
+          <span class="edit-modal-title">Edit Card</span>
+          <button class="save-btn" onclick="saveEdit()">Save</button>
+        </div>
+        <div class="form-scroll">
+          <div class="form-group">
+            <label class="form-label">Kanji / Front</label>
+            <input class="form-input kanji-input" id="e-kanji" type="text" maxlength="6"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Reading</label>
+            <input class="form-input" id="e-reading" type="text"/>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">JLPT</label>
+              <select class="form-select" id="e-jlpt">
+                <option>N5</option><option>N4</option><option>N3</option><option>N2</option><option>N1</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Onyomi</label>
+              <input class="form-input" id="e-onyomi" type="text"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kunyomi</label>
+            <input class="form-input" id="e-kunyomi" type="text"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Meaning *</label>
+            <input class="form-input" id="e-meaning" type="text"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Example (Japanese)</label>
+            <input class="form-input" id="e-exjp" type="text"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Example Translation</label>
+            <input class="form-input" id="e-exnp" type="text"/>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /screen -->
+</div><!-- /iphone -->
+
+<script>
+/* ════════════════════════════════════
+   DEFAULT DATA
+════════════════════════════════════ */
+const DEFAULT_CARDS = [
+  {kanji:'愛',reading:'あい',     jlpt:'N3',meaning:'माया / प्रेम',     onyomi:'アイ',      kunyomi:'いと・しい', exampleJp:'愛情 (あいじょう)', exampleNp:'प्रेम / स्नेह — affection'},
+  {kanji:'悲',reading:'かなしい', jlpt:'N3',meaning:'दुःख / शोक',        onyomi:'ヒ',        kunyomi:'かな・しい', exampleJp:'悲劇 (ひげき)',      exampleNp:'दुखान्त — tragedy'},
+  {kanji:'夢',reading:'ゆめ',     jlpt:'N3',meaning:'सपना / स्वप्न',     onyomi:'ム・ボウ',  kunyomi:'ゆめ',       exampleJp:'夢中 (むちゅう)',    exampleNp:'तल्लीन — absorbed'},
+  {kanji:'変',reading:'かわる',   jlpt:'N3',meaning:'परिवर्तन / अजीब',   onyomi:'ヘン',      kunyomi:'か・わる',   exampleJp:'変化 (へんか)',      exampleNp:'परिवर्तन — change'},
+  {kanji:'静',reading:'しずか',   jlpt:'N3',meaning:'शान्त / चुप',        onyomi:'セイ・ジョウ',kunyomi:'しず・か', exampleJp:'静かな (しずかな)', exampleNp:'शान्त — calm'},
+  {kanji:'危',reading:'あぶない', jlpt:'N3',meaning:'खतरा / जोखिम',      onyomi:'キ',        kunyomi:'あぶ・ない', exampleJp:'危険 (きけん)',      exampleNp:'खतरा — danger'},
+  {kanji:'優',reading:'やさしい', jlpt:'N2',meaning:'दयालु / उत्कृष्ट', onyomi:'ユウ',      kunyomi:'やさ・しい', exampleJp:'優しい (やさしい)', exampleNp:'दयालु — kind'},
+  {kanji:'複',reading:'ふくざつ', jlpt:'N2',meaning:'जटिल / बहु-',       onyomi:'フク',      kunyomi:'—',          exampleJp:'複雑 (ふくざつ)',    exampleNp:'जटिल — complex'},
+  {kanji:'恐',reading:'こわい',   jlpt:'N2',meaning:'डर / भय',           onyomi:'キョウ',    kunyomi:'おそ・れ',   exampleJp:'恐怖 (きょうふ)',    exampleNp:'डर — fear'},
+  {kanji:'努',reading:'つとめる', jlpt:'N2',meaning:'मेहनत / प्रयत्न',  onyomi:'ド',        kunyomi:'つと・める', exampleJp:'努力 (どりょく)',    exampleNp:'मेहनत — effort'}
+];
+
+const DECK_KEY    = 'kf_deck_v2';
+const STATE_KEY   = 'kf_state_v2';
+
+/* ════════════════════════════════════
+   STATE
+════════════════════════════════════ */
+let masterDeck = loadDeck();
+let deck       = [...masterDeck];
+let currentIdx = 0;
+let isFlipped  = false;
+let studiedSet = new Set();
+let activeTab  = 'add';
+let editIdx    = -1;
+
+function loadDeck() {
+  try { const r = localStorage.getItem(DECK_KEY); if(r) return JSON.parse(r); } catch(e){}
+  return DEFAULT_CARDS.map(c=>({...c}));
+}
+function saveDeck() { try{localStorage.setItem(DECK_KEY, JSON.stringify(masterDeck));}catch(e){} }
+function loadState() {
+  try {
+    const r = localStorage.getItem(STATE_KEY);
+    if(r){ const s=JSON.parse(r); currentIdx=Math.min(s.idx||0,deck.length-1); studiedSet=new Set(s.studied||[]); }
+  } catch(e){}
+}
+function saveState() { try{localStorage.setItem(STATE_KEY, JSON.stringify({idx:currentIdx, studied:[...studiedSet]}));}catch(e){} }
+
+/* ════════════════════════════════════
+   DOM
+════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const cardContainer = $('cardContainer');
+
+/* ════════════════════════════════════
+   CLOCK
+════════════════════════════════════ */
+function tick(){ const d=new Date(); $('clock').textContent=`${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`; }
+tick(); setInterval(tick,30000);
+
+/* ════════════════════════════════════
+   RENDER
+════════════════════════════════════ */
+function renderCard() {
+  if (!deck.length) { showEmpty(); return; }
+  const c=deck[currentIdx], n=deck.length;
+  $('kanjiChar').textContent   = c.kanji;
+  $('kanjiReading').textContent= c.reading||'—';
+  $('jlptBadge').textContent   = c.jlpt||'N?';
+  $('cardNum').textContent     = `${pad(currentIdx+1)} / ${pad(n)}`;
+  $('backKanji').textContent   = c.kanji;
+  $('meaningText').textContent = c.meaning||'—';
+  $('onyomi').textContent      = c.onyomi||'—';
+  $('kunyomi').textContent     = c.kunyomi||'—';
+  $('exampleJp').textContent   = c.exampleJp||'—';
+  $('exampleNp').textContent   = c.exampleNp||'—';
+  const pct=Math.round(((currentIdx+1)/n)*100);
+  $('progress-fill').style.width = pct+'%';
+  $('progress-text').textContent = `${currentIdx+1} / ${n}`;
+  studiedSet.add(currentIdx);
+  $('studied-count').textContent = studiedSet.size;
+  saveState();
+}
+function showEmpty(){
+  $('kanjiChar').textContent='?'; $('kanjiReading').textContent='No cards';
+  $('jlptBadge').textContent='—'; $('cardNum').textContent='00 / 00';
+  $('backKanji').textContent='?'; $('meaningText').textContent='Add cards via ⚙';
+  $('onyomi').textContent='—'; $('kunyomi').textContent='—';
+  $('exampleJp').textContent='—'; $('exampleNp').textContent='—';
+  $('progress-fill').style.width='0%'; $('progress-text').textContent='0 / 0';
+}
+function pad(n){ return String(n).padStart(2,'0'); }
+
+/* ════════════════════════════════════
+   FLIP / NAVIGATE / SHUFFLE
+════════════════════════════════════ */
+function flipCard() {
+  if(!deck.length) return;
+  isFlipped=!isFlipped; cardContainer.classList.toggle('flipped',isFlipped); hap();
+}
+function navigate(dir) {
+  if(!deck.length) return;
+  currentIdx=(currentIdx+dir+deck.length)%deck.length;
+  isFlipped=false; cardContainer.classList.remove('flipped');
+  const cls=dir===1?'card-anim-in-right':'card-anim-in-left';
+  cardContainer.classList.remove('card-anim-in-right','card-anim-in-left','card-anim-bounce');
+  void cardContainer.offsetWidth;
+  setTimeout(()=>{ renderCard(); cardContainer.classList.add(cls); setTimeout(()=>cardContainer.classList.remove(cls),360); },40);
+  hap();
+}
+function shuffle() {
+  if(!deck.length) return;
+  for(let i=deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; }
+  currentIdx=0; isFlipped=false; cardContainer.classList.remove('flipped','card-anim-in-right','card-anim-in-left','card-anim-bounce');
+  void cardContainer.offsetWidth; renderCard();
+  cardContainer.classList.add('card-anim-bounce');
+  setTimeout(()=>cardContainer.classList.remove('card-anim-bounce'),480);
+  toast('🔀 Shuffled!'); hap();
+}
+
+/* ════════════════════════════════════
+   SETTINGS SHEET
+════════════════════════════════════ */
+function openSettings() {
+  const ov=$('settingsOverlay');
+  ov.classList.remove('hiding'); ov.classList.add('visible');
+  switchTab(activeTab); hap();
+}
+function closeSettings() {
+  const ov=$('settingsOverlay');
+  ov.classList.add('hiding');
+  setTimeout(()=>ov.classList.remove('visible','hiding'), 300);
+}
+function overlayClick(e){ if(e.target===$('settingsOverlay')) closeSettings(); }
+
+function switchTab(tab) {
+  activeTab=tab;
+  $('seg-add').classList.toggle('active',tab==='add');
+  $('seg-manage').classList.toggle('active',tab==='manage');
+  $('tab-add').style.display   = tab==='add'    ? 'block' : 'none';
+  const m=$('tab-manage');
+  m.style.display = tab==='manage' ? 'flex' : 'none';
+  m.style.flexDirection='column';
+  if(tab==='manage') renderList();
+}
+
+/* ════════════════════════════════════
+   ADD CARD
+════════════════════════════════════ */
+function addCard() {
+  const kanji  = $('f-kanji').value.trim();
+  const meaning= $('f-meaning').value.trim();
+  if(!kanji||!meaning){ toast('⚠️ Kanji & Meaning required'); return; }
+  masterDeck.push({
+    kanji, meaning,
+    reading:   $('f-reading').value.trim()||'—',
+    jlpt:      $('f-jlpt').value,
+    onyomi:    $('f-onyomi').value.trim()||'—',
+    kunyomi:   $('f-kunyomi').value.trim()||'—',
+    exampleJp: $('f-exjp').value.trim()||'—',
+    exampleNp: $('f-exnp').value.trim()||'—',
+  });
+  deck=[...masterDeck]; saveDeck();
+  ['f-kanji','f-reading','f-onyomi','f-kunyomi','f-meaning','f-exjp','f-exnp'].forEach(id=>$(id).value='');
+  currentIdx=deck.length-1; isFlipped=false;
+  cardContainer.classList.remove('flipped','card-anim-bounce');
+  void cardContainer.offsetWidth; renderCard();
+  cardContainer.classList.add('card-anim-bounce');
+  setTimeout(()=>cardContainer.classList.remove('card-anim-bounce'),480);
+  toast(`✅ "${kanji}" added!`); closeSettings(); hap();
+}
+
+/* ════════════════════════════════════
+   MANAGE LIST
+════════════════════════════════════ */
+function renderList() {
+  const list=$('cardList');
+  $('list-count').textContent=`${masterDeck.length} card${masterDeck.length!==1?'s':''}`;
+  if(!masterDeck.length){
+    list.innerHTML=`<div class="empty-state"><div class="empty-emoji">🃏</div><div class="empty-text">No cards yet.<br>Add some in the Add Card tab!</div></div>`;
+    return;
+  }
+  list.innerHTML=masterDeck.map((c,i)=>`
+    <div class="card-row" style="animation-delay:${i*0.035}s">
+      <div class="card-row-kanji">${c.kanji}</div>
+      <div class="card-row-info">
+        <div class="card-row-meaning">${c.meaning}</div>
+        <div class="card-row-sub">${c.reading} · ${c.onyomi}</div>
+      </div>
+      <div class="card-row-tag">${c.jlpt}</div>
+      <div class="card-row-actions">
+        <button class="row-btn edit-btn"   onclick="openEdit(${i})">✏️</button>
+        <button class="row-btn delete-btn" onclick="deleteCard(${i})">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deleteCard(i) {
+  if(!confirm(`Delete "${masterDeck[i].kanji}"?`)) return;
+  const k=masterDeck[i].kanji;
+  masterDeck.splice(i,1); deck=[...masterDeck]; saveDeck();
+  currentIdx=Math.min(currentIdx,Math.max(0,deck.length-1));
+  studiedSet=new Set(); renderCard(); renderList();
+  toast(`🗑️ "${k}" deleted`);
+}
+
+function confirmReset() {
+  if(!confirm('Reset to 10 default cards? Custom cards will be lost.')) return;
+  masterDeck=DEFAULT_CARDS.map(c=>({...c})); deck=[...masterDeck]; saveDeck();
+  currentIdx=0; studiedSet=new Set(); isFlipped=false;
+  cardContainer.classList.remove('flipped'); renderCard(); renderList();
+  toast('✅ Reset to default deck');
+}
+
+/* ════════════════════════════════════
+   EDIT MODAL
+════════════════════════════════════ */
+function openEdit(i) {
+  editIdx=i; const c=masterDeck[i];
+  $('e-kanji').value  =c.kanji;
+  $('e-reading').value=c.reading;
+  $('e-jlpt').value   =c.jlpt;
+  $('e-onyomi').value =c.onyomi;
+  $('e-kunyomi').value=c.kunyomi;
+  $('e-meaning').value=c.meaning;
+  $('e-exjp').value   =c.exampleJp;
+  $('e-exnp').value   =c.exampleNp;
+  $('editModal').classList.add('open');
+}
+function closeEditModal() { $('editModal').classList.remove('open'); editIdx=-1; }
+function saveEdit() {
+  if(editIdx<0) return;
+  const kanji=$('e-kanji').value.trim(), meaning=$('e-meaning').value.trim();
+  if(!kanji||!meaning){ toast('⚠️ Kanji & Meaning required'); return; }
+  masterDeck[editIdx]={
+    kanji, meaning,
+    reading:   $('e-reading').value.trim()||'—',
+    jlpt:      $('e-jlpt').value,
+    onyomi:    $('e-onyomi').value.trim()||'—',
+    kunyomi:   $('e-kunyomi').value.trim()||'—',
+    exampleJp: $('e-exjp').value.trim()||'—',
+    exampleNp: $('e-exnp').value.trim()||'—',
+  };
+  deck=[...masterDeck]; saveDeck();
+  if(currentIdx<deck.length) renderCard();
+  renderList(); closeEditModal();
+  toast('✅ Card updated!');
+}
+
+/* ════════════════════════════════════
+   TOAST & HAPTIC
+════════════════════════════════════ */
+let tTimer;
+function toast(msg) {
+  const el=$('toast'); el.textContent=msg; el.classList.add('show');
+  clearTimeout(tTimer); tTimer=setTimeout(()=>el.classList.remove('show'),2000);
+}
+function hap(){ if(navigator.vibrate) navigator.vibrate(8); }
+
+/* ════════════════════════════════════
+   EVENTS
+════════════════════════════════════ */
+cardContainer.addEventListener('click', flipCard);
+document.addEventListener('keydown', e=>{
+  if($('settingsOverlay').classList.contains('visible')) return;
+  if(e.key==='ArrowRight') navigate(1);
+  else if(e.key==='ArrowLeft') navigate(-1);
+  else if(e.key===' '||e.key==='Enter'){e.preventDefault();flipCard();}
+  else if(e.key==='s') shuffle();
+});
+let tx=0,ty=0;
+cardContainer.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
+cardContainer.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40) navigate(dx<0?1:-1);
+  else if(Math.abs(dx)<10&&Math.abs(dy)<10) flipCard();
+},{passive:true});
+
+/* ════════════════════════════════════
+   INIT
+════════════════════════════════════ */
+loadState(); renderCard();
+</script>
+</body>
+</html>
