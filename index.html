@@ -608,7 +608,17 @@
 <script>
   let deck = JSON.parse(localStorage.getItem('kanji_deck')) || [
     { kanji: '愛', reading: 'あい', jlpt: 'N3', onyomi: 'アイ', kunyomi: 'いと・しい', meaning: 'माया / प्रेम', exjp: '愛情 (あいじょう)', exnp: 'प्रेम / स्नेह' },
-    { kanji: '心', reading: 'こころ', jlpt: 'N4', onyomi: 'シン', kunyomi: 'こころ', meaning: 'मुटु / मन', exjp: '安心 (あんしん)', exnp: 'शान्ति / ढुक्क' }
+    { kanji: '音声', reading: 'おんせい', jlpt: 'N3', onyomi: 'オン・セイ', kunyomi: '-', meaning: 'आवाज / अडियो', exjp: '音声入力', exnp: 'भ्वाइस इनपुट' },
+{ kanji: '回答', reading: 'かいとう', jlpt: 'N3', onyomi: 'カイ・トウ', kunyomi: '-', meaning: 'उत्तर', exjp: '回答を送る', exnp: 'उत्तर पठाउनु' },
+{ kanji: '選択肢', reading: 'せんたくし', jlpt: 'N2', onyomi: 'セン・タク・シ', kunyomi: '-', meaning: 'विकल्पहरू', exjp: '選択肢が多い', exnp: 'विकल्प धेरै छन्' },
+{ kanji: '握手', reading: 'あくしゅ', jlpt: 'N3', onyomi: 'アク・シュ', kunyomi: '-', meaning: 'हात मिलाउनु', exjp: '握手を求める', exnp: 'हात मिलाउन माग गर्नु' },
+{ kanji: '謝罪', reading: 'しゃざい', jlpt: 'N2', onyomi: 'シャ・ザイ', kunyomi: '-', meaning: 'क्षमायाचना / माफी', exjp: '謝罪の言葉', exnp: 'माफीका शब्द' },
+{ kanji: 'お辞儀', reading: 'おじぎ', jlpt: 'N3', onyomi: '-', kunyomi: 'おじぎ', meaning: 'ढोग / नमस्कार', exjp: '深くお辞儀する', exnp: 'गहिरो गरी नमस्कार गर्नु' },
+{ kanji: '議論', reading: 'ぎろん', jlpt: 'N2', onyomi: 'ギ・ロン', kunyomi: '-', meaning: 'छलफल', exjp: '議論が続く', exnp: 'छलफल जारी रह्यो' },
+{ kanji: '配布', reading: 'はいふ', jlpt: 'N2', onyomi: 'ハイ・フ', kunyomi: '-', meaning: 'वितरण गर्नु', exjp: '資料を配布する', exnp: 'सामग्री वितरण गर्नु' },
+{ kanji: '資料', reading: 'しりょう', jlpt: 'N3', onyomi: 'シ・リョウ', kunyomi: '-', meaning: 'सामग्री / कागजात', exjp: '資料を準備する', exnp: 'कागजात तयार गर्नु' },
+{ kanji: '名刺', reading: 'めいし', jlpt: 'N3', onyomi: 'メイ・シ', kunyomi: '-', meaning: 'व्यापार कार्ड', exjp: '名刺交換', exnp: 'बिजनेस कार्ड साटासाट' },
+{ kanji: '打ち合わせ', reading: 'うちあわせ', jlpt: 'N3', onyomi: '-', kunyomi: 'うちあわせ', meaning: 'पूर्व-छलफल / बैठक', exjp: '打ち合わせを行う', exnp: 'बैठक गर्नु' }
   ];
   
   let currentIndex = 0;
