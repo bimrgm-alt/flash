@@ -33,6 +33,7 @@
     --ease-ios: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
+  /* Original Reset & Body */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
     width: 100%; height: 100%; background: #000;
@@ -107,14 +108,14 @@
   }
   .badge-dot { width: 6px; height: 6px; background: var(--accent2); border-radius: 50%; }
 
-  /* ⚙ Settings button */
-  .settings-btn {
+  /* ⚙ Settings & Add buttons */
+  .settings-btn, .add-word-btn {
     width: 36px; height: 36px; background: var(--surface3);
     border: 1px solid var(--border2); border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer; transition: all 0.22s var(--ease-ios); flex-shrink: 0;
   }
-  .settings-btn:active { transform: scale(0.86); background: var(--surface2); }
+  .settings-btn:active, .add-word-btn:active { transform: scale(0.86); background: var(--surface2); }
   .settings-btn svg { transition: transform 0.55s var(--ease-ios); }
   .settings-btn:active svg { transform: rotate(70deg); }
 
@@ -260,7 +261,7 @@
   /* ── Keyframes ── */
   @keyframes slideInRight { from{opacity:0;transform:translateX(36px) scale(0.95);}to{opacity:1;transform:none;} }
   @keyframes slideInLeft  { from{opacity:0;transform:translateX(-36px) scale(0.95);}to{opacity:1;transform:none;} }
-  @keyframes bounceIn     { 0%{transform:scale(0.85) rotate(-3deg);opacity:0;} 60%{transform:scale(1.04);opacity:1;} 100%{transform:none;opacity:1;} }
+  @keyframes bounceIn      { 0%{transform:scale(0.85) rotate(-3deg);opacity:0;} 60%{transform:scale(1.04);opacity:1;} 100%{transform:none;opacity:1;} }
   @keyframes sheetUp      { from{transform:translateY(100%);}to{transform:translateY(0);} }
   @keyframes sheetDown    { from{transform:translateY(0);}to{transform:translateY(100%);} }
   @keyframes overlayIn    { from{opacity:0;}to{opacity:1;} }
@@ -272,7 +273,7 @@
   .card-anim-bounce   { animation: bounceIn     0.45s var(--easing) forwards; }
 
   /* ═══════════════════════════════════
-     SETTINGS SHEET
+      SETTINGS SHEET
   ═══════════════════════════════════ */
   .sheet-overlay {
     position: absolute; inset: 0; z-index: 200;
@@ -386,7 +387,7 @@
   .empty-emoji { font-size: 40px; }
   .empty-text { font-size: 14px; color: var(--text3); text-align: center; line-height: 1.5; }
 
-  /* Edit modal (slides in from right inside sheet) */
+  /* Edit modal */
   .edit-modal {
     position: absolute; inset: 0; background: #1C1C1E; border-radius: 28px 28px 0 0;
     display: flex; flex-direction: column;
@@ -414,17 +415,14 @@
 
   @media (max-height: 860px) { .iphone { height: 780px; } .kanji-char { font-size: 96px; } }
   @media (max-width: 420px) { .iphone { width: 100vw; border-radius: 0; box-shadow: none; } .screen { border-radius: 0; } }
-  ::-webkit-scrollbar { display: none; }
 </style>
 </head>
 <body>
 
 <div class="iphone">
 <div class="screen">
-
   <div class="dynamic-island"><div class="di-camera"></div></div>
 
-  <!-- Status Bar -->
   <div class="status-bar">
     <div class="status-time" id="clock">9:41</div>
     <div class="status-icons">
@@ -434,7 +432,6 @@
     </div>
   </div>
 
-  <!-- Header -->
   <div class="app-header">
     <div class="header-top">
       <div class="header-left">
@@ -442,10 +439,13 @@
         <div class="app-subtitle">Kanji Flash · JLPT Study</div>
       </div>
       <div class="header-right">
-        <div class="header-badge">
-          <div class="badge-dot"></div>
-          <span id="studied-count">0</span> done
+        <div class="add-word-btn" onclick="openAddModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
         </div>
+        
         <div class="settings-btn" onclick="openSettings()">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"/>
@@ -456,7 +456,6 @@
     </div>
   </div>
 
-  <!-- Progress -->
   <div class="progress-wrap">
     <div class="progress-meta">
       <span class="progress-label">Progress</span>
@@ -467,12 +466,10 @@
     </div>
   </div>
 
-  <!-- Card Stage -->
   <div class="card-stage">
     <div class="card-ghost card-ghost-1"></div>
     <div class="card-ghost card-ghost-2"></div>
-    <div class="card-container" id="cardContainer">
-      <!-- Front -->
+    <div class="card-container" id="cardContainer" onclick="flipCard()">
       <div class="card-face card-front">
         <div class="front-top">
           <div class="jlpt-badge" id="jlptBadge">N3</div>
@@ -487,7 +484,6 @@
           <span class="tap-hint">Tap to reveal</span>
         </div>
       </div>
-      <!-- Back -->
       <div class="card-face card-back">
         <div class="back-inner">
           <div class="back-header">
@@ -519,10 +515,8 @@
     </div>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast"></div>
 
-  <!-- Bottom Nav -->
   <div class="bottom-nav">
     <div class="nav-glass">
       <button class="nav-btn" onclick="navigate(-1)">
@@ -533,7 +527,7 @@
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11C3 7.13 6.13 4 10 4h9M19 4l-3-3M19 4l-3 3M19 11c0 3.87-3.13 7-7 7H3M3 18l3 3M3 18l3-3"/></svg>
         <span class="nav-label">Flip</span>
       </button>
-      <button class="nav-btn" onclick="shuffle()">
+      <button class="nav-btn" onclick="shuffleCards()">
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 7h3l9 8h4M19 7h-4l-3 2.67M19 15h-4l-9-8H3M16 5l3 2-3 2M16 13l3 2-3 2" stroke="rgba(255,255,255,0.5)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span class="nav-label">Shuffle</span>
       </button>
@@ -544,25 +538,19 @@
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════
-       SETTINGS SHEET
-  ═══════════════════════════════════ -->
-  <div class="sheet-overlay" id="settingsOverlay" onclick="overlayClick(event)">
-    <div class="settings-sheet" id="settingsSheet">
+  <div class="sheet-overlay" id="settingsOverlay">
+    <div class="settings-sheet">
       <div class="sheet-handle"></div>
-
       <div class="sheet-header">
         <div class="sheet-title">⚙︎ Card Settings</div>
         <button class="sheet-close-btn" onclick="closeSettings()">✕</button>
       </div>
 
-      <!-- Segment control -->
       <div class="seg-control">
-        <button class="seg-btn active" id="seg-add"    onclick="switchTab('add')">＋ Add Card</button>
-        <button class="seg-btn"        id="seg-manage" onclick="switchTab('manage')">Manage Deck</button>
+        <button class="seg-btn active" id="seg-add" onclick="switchTab('add')">＋ Add Card</button>
+        <button class="seg-btn" id="seg-manage" onclick="switchTab('manage')">Manage Deck</button>
       </div>
 
-      <!-- ADD TAB -->
       <div id="tab-add" class="form-scroll">
         <div class="form-group">
           <label class="form-label">Kanji / Front Character</label>
@@ -590,365 +578,180 @@
           <input class="form-input" id="f-kunyomi" type="text" placeholder="いと・しい"/>
         </div>
         <div class="form-group">
-          <label class="form-label">Meaning (your language) *</label>
-          <input class="form-input" id="f-meaning" type="text" placeholder="माया / प्रेम"/>
+          <label class="form-label">Meaning *</label>
+          <input class="form-input" id="f-meaning" type="text" placeholder="maya / love"/>
         </div>
         <div class="form-group">
-          <label class="form-label">Example Word (Japanese)</label>
+          <label class="form-label">Example Word</label>
           <input class="form-input" id="f-exjp" type="text" placeholder="愛情 (あいじょう)"/>
         </div>
         <div class="form-group">
           <label class="form-label">Example Translation</label>
-          <input class="form-input" id="f-exnp" type="text" placeholder="प्रेम — affection"/>
-          <div class="form-hint">* Kanji and Meaning are required. All other fields are optional.</div>
+          <input class="form-input" id="f-exnp" type="text" placeholder="affection"/>
         </div>
         <button class="add-btn" onclick="addCard()">Add to Deck</button>
       </div>
 
-      <!-- MANAGE TAB -->
       <div id="tab-manage" style="display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden;">
         <div class="list-header">
           <span class="list-count" id="list-count">0 cards</span>
-          <button class="reset-btn" onclick="confirmReset()">Reset to Default</button>
+          <button class="reset-btn" onclick="resetDeck()">Reset</button>
         </div>
         <div class="card-list" id="cardList"></div>
       </div>
-
-      <!-- EDIT MODAL (slides over the sheet) -->
-      <div class="edit-modal" id="editModal">
-        <div class="edit-modal-header">
-          <button class="back-btn" onclick="closeEditModal()">
-            <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M8 1L1 7.5 8 14" stroke="#0A84FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Back
-          </button>
-          <span class="edit-modal-title">Edit Card</span>
-          <button class="save-btn" onclick="saveEdit()">Save</button>
-        </div>
-        <div class="form-scroll">
-          <div class="form-group">
-            <label class="form-label">Kanji / Front</label>
-            <input class="form-input kanji-input" id="e-kanji" type="text" maxlength="6"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Reading</label>
-            <input class="form-input" id="e-reading" type="text"/>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">JLPT</label>
-              <select class="form-select" id="e-jlpt">
-                <option>N5</option><option>N4</option><option>N3</option><option>N2</option><option>N1</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Onyomi</label>
-              <input class="form-input" id="e-onyomi" type="text"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Kunyomi</label>
-            <input class="form-input" id="e-kunyomi" type="text"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Meaning *</label>
-            <input class="form-input" id="e-meaning" type="text"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Example (Japanese)</label>
-            <input class="form-input" id="e-exjp" type="text"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Example Translation</label>
-            <input class="form-input" id="e-exnp" type="text"/>
-          </div>
-        </div>
-      </div>
-
     </div>
   </div>
 
-</div><!-- /screen -->
-</div><!-- /iphone -->
+</div>
+</div>
 
 <script>
-/* ════════════════════════════════════
-   DEFAULT DATA
-════════════════════════════════════ */
-const DEFAULT_CARDS = [
-  {kanji:'愛',reading:'あい',     jlpt:'N3',meaning:'माया / प्रेम',     onyomi:'アイ',      kunyomi:'いと・しい', exampleJp:'愛情 (あいじょう)', exampleNp:'प्रेम / स्नेह — affection'},
-  {kanji:'悲',reading:'かなしい', jlpt:'N3',meaning:'दुःख / शोक',        onyomi:'ヒ',        kunyomi:'かな・しい', exampleJp:'悲劇 (ひげき)',      exampleNp:'दुखान्त — tragedy'},
-  {kanji:'夢',reading:'ゆめ',     jlpt:'N3',meaning:'सपना / स्वप्न',     onyomi:'ム・ボウ',  kunyomi:'ゆめ',       exampleJp:'夢中 (むちゅう)',    exampleNp:'तल्लीन — absorbed'},
-  {kanji:'変',reading:'かわる',   jlpt:'N3',meaning:'परिवर्तन / अजीब',   onyomi:'ヘン',      kunyomi:'か・わる',   exampleJp:'変化 (へんか)',      exampleNp:'परिवर्तन — change'},
-  {kanji:'静',reading:'しずか',   jlpt:'N3',meaning:'शान्त / चुप',        onyomi:'セイ・ジョウ',kunyomi:'しず・か', exampleJp:'静かな (しずかな)', exampleNp:'शान्त — calm'},
-  {kanji:'危',reading:'あぶない', jlpt:'N3',meaning:'खतरा / जोखिम',      onyomi:'キ',        kunyomi:'あぶ・ない', exampleJp:'危険 (きけん)',      exampleNp:'खतरा — danger'},
-  {kanji:'優',reading:'やさしい', jlpt:'N2',meaning:'दयालु / उत्कृष्ट', onyomi:'ユウ',      kunyomi:'やさ・しい', exampleJp:'優しい (やさしい)', exampleNp:'दयालु — kind'},
-  {kanji:'複',reading:'ふくざつ', jlpt:'N2',meaning:'जटिल / बहु-',       onyomi:'フク',      kunyomi:'—',          exampleJp:'複雑 (ふくざつ)',    exampleNp:'जटिल — complex'},
-  {kanji:'恐',reading:'こわい',   jlpt:'N2',meaning:'डर / भय',           onyomi:'キョウ',    kunyomi:'おそ・れ',   exampleJp:'恐怖 (きょうふ)',    exampleNp:'डर — fear'},
-  {kanji:'努',reading:'つとめる', jlpt:'N2',meaning:'मेहनत / प्रयत्न',  onyomi:'ド',        kunyomi:'つと・める', exampleJp:'努力 (どりょく)',    exampleNp:'मेहनत — effort'}
-];
+  let deck = JSON.parse(localStorage.getItem('kanji_deck')) || [
+    { kanji: '愛', reading: 'あい', jlpt: 'N3', onyomi: 'アイ', kunyomi: 'いと・しい', meaning: 'माया / प्रेम', exjp: '愛情 (あいじょう)', exnp: 'प्रेम / स्नेह' },
+    { kanji: '心', reading: 'こころ', jlpt: 'N4', onyomi: 'シン', kunyomi: 'こころ', meaning: 'मुटु / मन', exjp: '安心 (あんしん)', exnp: 'शान्ति / ढुक्क' }
+  ];
+  
+  let currentIndex = 0;
 
-const DECK_KEY    = 'kf_deck_v2';
-const STATE_KEY   = 'kf_state_v2';
-
-/* ════════════════════════════════════
-   STATE
-════════════════════════════════════ */
-let masterDeck = loadDeck();
-let deck       = [...masterDeck];
-let currentIdx = 0;
-let isFlipped  = false;
-let studiedSet = new Set();
-let activeTab  = 'add';
-let editIdx    = -1;
-
-function loadDeck() {
-  try { const r = localStorage.getItem(DECK_KEY); if(r) return JSON.parse(r); } catch(e){}
-  return DEFAULT_CARDS.map(c=>({...c}));
-}
-function saveDeck() { try{localStorage.setItem(DECK_KEY, JSON.stringify(masterDeck));}catch(e){} }
-function loadState() {
-  try {
-    const r = localStorage.getItem(STATE_KEY);
-    if(r){ const s=JSON.parse(r); currentIdx=Math.min(s.idx||0,deck.length-1); studiedSet=new Set(s.studied||[]); }
-  } catch(e){}
-}
-function saveState() { try{localStorage.setItem(STATE_KEY, JSON.stringify({idx:currentIdx, studied:[...studiedSet]}));}catch(e){} }
-
-/* ════════════════════════════════════
-   DOM
-════════════════════════════════════ */
-const $ = id => document.getElementById(id);
-const cardContainer = $('cardContainer');
-
-/* ════════════════════════════════════
-   CLOCK
-════════════════════════════════════ */
-function tick(){ const d=new Date(); $('clock').textContent=`${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`; }
-tick(); setInterval(tick,30000);
-
-/* ════════════════════════════════════
-   RENDER
-════════════════════════════════════ */
-function renderCard() {
-  if (!deck.length) { showEmpty(); return; }
-  const c=deck[currentIdx], n=deck.length;
-  $('kanjiChar').textContent   = c.kanji;
-  $('kanjiReading').textContent= c.reading||'—';
-  $('jlptBadge').textContent   = c.jlpt||'N?';
-  $('cardNum').textContent     = `${pad(currentIdx+1)} / ${pad(n)}`;
-  $('backKanji').textContent   = c.kanji;
-  $('meaningText').textContent = c.meaning||'—';
-  $('onyomi').textContent      = c.onyomi||'—';
-  $('kunyomi').textContent     = c.kunyomi||'—';
-  $('exampleJp').textContent   = c.exampleJp||'—';
-  $('exampleNp').textContent   = c.exampleNp||'—';
-  const pct=Math.round(((currentIdx+1)/n)*100);
-  $('progress-fill').style.width = pct+'%';
-  $('progress-text').textContent = `${currentIdx+1} / ${n}`;
-  studiedSet.add(currentIdx);
-  $('studied-count').textContent = studiedSet.size;
-  saveState();
-}
-function showEmpty(){
-  $('kanjiChar').textContent='?'; $('kanjiReading').textContent='No cards';
-  $('jlptBadge').textContent='—'; $('cardNum').textContent='00 / 00';
-  $('backKanji').textContent='?'; $('meaningText').textContent='Add cards via ⚙';
-  $('onyomi').textContent='—'; $('kunyomi').textContent='—';
-  $('exampleJp').textContent='—'; $('exampleNp').textContent='—';
-  $('progress-fill').style.width='0%'; $('progress-text').textContent='0 / 0';
-}
-function pad(n){ return String(n).padStart(2,'0'); }
-
-/* ════════════════════════════════════
-   FLIP / NAVIGATE / SHUFFLE
-════════════════════════════════════ */
-function flipCard() {
-  if(!deck.length) return;
-  isFlipped=!isFlipped; cardContainer.classList.toggle('flipped',isFlipped); hap();
-}
-function navigate(dir) {
-  if(!deck.length) return;
-  currentIdx=(currentIdx+dir+deck.length)%deck.length;
-  isFlipped=false; cardContainer.classList.remove('flipped');
-  const cls=dir===1?'card-anim-in-right':'card-anim-in-left';
-  cardContainer.classList.remove('card-anim-in-right','card-anim-in-left','card-anim-bounce');
-  void cardContainer.offsetWidth;
-  setTimeout(()=>{ renderCard(); cardContainer.classList.add(cls); setTimeout(()=>cardContainer.classList.remove(cls),360); },40);
-  hap();
-}
-function shuffle() {
-  if(!deck.length) return;
-  for(let i=deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; }
-  currentIdx=0; isFlipped=false; cardContainer.classList.remove('flipped','card-anim-in-right','card-anim-in-left','card-anim-bounce');
-  void cardContainer.offsetWidth; renderCard();
-  cardContainer.classList.add('card-anim-bounce');
-  setTimeout(()=>cardContainer.classList.remove('card-anim-bounce'),480);
-  toast('🔀 Shuffled!'); hap();
-}
-
-/* ════════════════════════════════════
-   SETTINGS SHEET
-════════════════════════════════════ */
-function openSettings() {
-  const ov=$('settingsOverlay');
-  ov.classList.remove('hiding'); ov.classList.add('visible');
-  switchTab(activeTab); hap();
-}
-function closeSettings() {
-  const ov=$('settingsOverlay');
-  ov.classList.add('hiding');
-  setTimeout(()=>ov.classList.remove('visible','hiding'), 300);
-}
-function overlayClick(e){ if(e.target===$('settingsOverlay')) closeSettings(); }
-
-function switchTab(tab) {
-  activeTab=tab;
-  $('seg-add').classList.toggle('active',tab==='add');
-  $('seg-manage').classList.toggle('active',tab==='manage');
-  $('tab-add').style.display   = tab==='add'    ? 'block' : 'none';
-  const m=$('tab-manage');
-  m.style.display = tab==='manage' ? 'flex' : 'none';
-  m.style.flexDirection='column';
-  if(tab==='manage') renderList();
-}
-
-/* ════════════════════════════════════
-   ADD CARD
-════════════════════════════════════ */
-function addCard() {
-  const kanji  = $('f-kanji').value.trim();
-  const meaning= $('f-meaning').value.trim();
-  if(!kanji||!meaning){ toast('⚠️ Kanji & Meaning required'); return; }
-  masterDeck.push({
-    kanji, meaning,
-    reading:   $('f-reading').value.trim()||'—',
-    jlpt:      $('f-jlpt').value,
-    onyomi:    $('f-onyomi').value.trim()||'—',
-    kunyomi:   $('f-kunyomi').value.trim()||'—',
-    exampleJp: $('f-exjp').value.trim()||'—',
-    exampleNp: $('f-exnp').value.trim()||'—',
-  });
-  deck=[...masterDeck]; saveDeck();
-  ['f-kanji','f-reading','f-onyomi','f-kunyomi','f-meaning','f-exjp','f-exnp'].forEach(id=>$(id).value='');
-  currentIdx=deck.length-1; isFlipped=false;
-  cardContainer.classList.remove('flipped','card-anim-bounce');
-  void cardContainer.offsetWidth; renderCard();
-  cardContainer.classList.add('card-anim-bounce');
-  setTimeout(()=>cardContainer.classList.remove('card-anim-bounce'),480);
-  toast(`✅ "${kanji}" added!`); closeSettings(); hap();
-}
-
-/* ════════════════════════════════════
-   MANAGE LIST
-════════════════════════════════════ */
-function renderList() {
-  const list=$('cardList');
-  $('list-count').textContent=`${masterDeck.length} card${masterDeck.length!==1?'s':''}`;
-  if(!masterDeck.length){
-    list.innerHTML=`<div class="empty-state"><div class="empty-emoji">🃏</div><div class="empty-text">No cards yet.<br>Add some in the Add Card tab!</div></div>`;
-    return;
+  // Initialize
+  function init() {
+    updateClock();
+    setInterval(updateClock, 1000);
+    renderCard();
+    renderList();
   }
-  list.innerHTML=masterDeck.map((c,i)=>`
-    <div class="card-row" style="animation-delay:${i*0.035}s">
-      <div class="card-row-kanji">${c.kanji}</div>
-      <div class="card-row-info">
-        <div class="card-row-meaning">${c.meaning}</div>
-        <div class="card-row-sub">${c.reading} · ${c.onyomi}</div>
-      </div>
-      <div class="card-row-tag">${c.jlpt}</div>
-      <div class="card-row-actions">
-        <button class="row-btn edit-btn"   onclick="openEdit(${i})">✏️</button>
+
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').textContent = now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0');
+  }
+
+  function renderCard() {
+    const card = deck[currentIndex];
+    const container = document.getElementById('cardContainer');
+    container.classList.remove('flipped');
+    
+    document.getElementById('kanjiChar').textContent = card.kanji;
+    document.getElementById('kanjiReading').textContent = card.reading;
+    document.getElementById('jlptBadge').textContent = card.jlpt;
+    document.getElementById('cardNum').textContent = (currentIndex + 1).toString().padStart(2, '0') + " / " + deck.length.toString().padStart(2, '0');
+    
+    document.getElementById('backKanji').textContent = card.kanji;
+    document.getElementById('meaningText').textContent = card.meaning;
+    document.getElementById('onyomi').textContent = card.onyomi || '-';
+    document.getElementById('kunyomi').textContent = card.kunyomi || '-';
+    document.getElementById('exampleJp').textContent = card.exjp || '-';
+    document.getElementById('exampleNp').textContent = card.exnp || '-';
+
+    document.getElementById('progress-text').textContent = (currentIndex + 1) + " / " + deck.length;
+    document.getElementById('progress-fill').style.width = ((currentIndex + 1) / deck.length * 100) + "%";
+  }
+
+  function flipCard() {
+    document.getElementById('cardContainer').classList.toggle('flipped');
+  }
+
+  function navigate(dir) {
+    currentIndex = (currentIndex + dir + deck.length) % deck.length;
+    renderCard();
+  }
+
+  function shuffleCards() {
+    deck.sort(() => Math.random() - 0.5);
+    currentIndex = 0;
+    renderCard();
+    showToast("Deck Shuffled");
+  }
+
+  function openSettings() {
+    document.getElementById('settingsOverlay').classList.add('visible');
+  }
+
+  function openAddModal() {
+    openSettings();
+    switchTab('add');
+  }
+
+  function closeSettings() {
+    const overlay = document.getElementById('settingsOverlay');
+    overlay.classList.add('hiding');
+    setTimeout(() => {
+      overlay.classList.remove('visible', 'hiding');
+    }, 300);
+  }
+
+  function switchTab(tab) {
+    document.getElementById('tab-add').style.display = tab === 'add' ? 'block' : 'none';
+    document.getElementById('tab-manage').style.display = tab === 'manage' ? 'flex' : 'none';
+    document.getElementById('seg-add').classList.toggle('active', tab === 'add');
+    document.getElementById('seg-manage').classList.toggle('active', tab === 'manage');
+  }
+
+  function addCard() {
+    const kanji = document.getElementById('f-kanji').value;
+    const meaning = document.getElementById('f-meaning').value;
+    if(!kanji || !meaning) return showToast("Kanji & Meaning required");
+
+    const newCard = {
+      kanji: kanji,
+      reading: document.getElementById('f-reading').value,
+      jlpt: document.getElementById('f-jlpt').value,
+      onyomi: document.getElementById('f-onyomi').value,
+      kunyomi: document.getElementById('f-kunyomi').value,
+      meaning: meaning,
+      exjp: document.getElementById('f-exjp').value,
+      exnp: document.getElementById('f-exnp').value
+    };
+
+    deck.push(newCard);
+    localStorage.setItem('kanji_deck', JSON.stringify(deck));
+    renderList();
+    renderCard();
+    showToast("Added to deck!");
+    
+    // Clear inputs
+    ['f-kanji', 'f-reading', 'f-onyomi', 'f-kunyomi', 'f-meaning', 'f-exjp', 'f-exnp'].forEach(id => document.getElementById(id).value = '');
+  }
+
+  function renderList() {
+    const list = document.getElementById('cardList');
+    document.getElementById('list-count').textContent = deck.length + " cards";
+    list.innerHTML = deck.map((c, i) => `
+      <div class="card-row">
+        <div class="card-row-kanji">${c.kanji}</div>
+        <div class="card-row-info">
+          <div class="card-row-meaning">${c.meaning}</div>
+          <div class="card-row-sub">${c.reading}</div>
+        </div>
+        <div class="card-row-tag">${c.jlpt}</div>
         <button class="row-btn delete-btn" onclick="deleteCard(${i})">🗑️</button>
       </div>
-    </div>
-  `).join('');
-}
+    `).join('');
+  }
 
-function deleteCard(i) {
-  if(!confirm(`Delete "${masterDeck[i].kanji}"?`)) return;
-  const k=masterDeck[i].kanji;
-  masterDeck.splice(i,1); deck=[...masterDeck]; saveDeck();
-  currentIdx=Math.min(currentIdx,Math.max(0,deck.length-1));
-  studiedSet=new Set(); renderCard(); renderList();
-  toast(`🗑️ "${k}" deleted`);
-}
+  function deleteCard(index) {
+    deck.splice(index, 1);
+    if(currentIndex >= deck.length) currentIndex = Math.max(0, deck.length - 1);
+    localStorage.setItem('kanji_deck', JSON.stringify(deck));
+    renderList();
+    renderCard();
+  }
 
-function confirmReset() {
-  if(!confirm('Reset to 10 default cards? Custom cards will be lost.')) return;
-  masterDeck=DEFAULT_CARDS.map(c=>({...c})); deck=[...masterDeck]; saveDeck();
-  currentIdx=0; studiedSet=new Set(); isFlipped=false;
-  cardContainer.classList.remove('flipped'); renderCard(); renderList();
-  toast('✅ Reset to default deck');
-}
+  function resetDeck() {
+    if(confirm("Reset to default cards?")) {
+      localStorage.removeItem('kanji_deck');
+      location.reload();
+    }
+  }
 
-/* ════════════════════════════════════
-   EDIT MODAL
-════════════════════════════════════ */
-function openEdit(i) {
-  editIdx=i; const c=masterDeck[i];
-  $('e-kanji').value  =c.kanji;
-  $('e-reading').value=c.reading;
-  $('e-jlpt').value   =c.jlpt;
-  $('e-onyomi').value =c.onyomi;
-  $('e-kunyomi').value=c.kunyomi;
-  $('e-meaning').value=c.meaning;
-  $('e-exjp').value   =c.exampleJp;
-  $('e-exnp').value   =c.exampleNp;
-  $('editModal').classList.add('open');
-}
-function closeEditModal() { $('editModal').classList.remove('open'); editIdx=-1; }
-function saveEdit() {
-  if(editIdx<0) return;
-  const kanji=$('e-kanji').value.trim(), meaning=$('e-meaning').value.trim();
-  if(!kanji||!meaning){ toast('⚠️ Kanji & Meaning required'); return; }
-  masterDeck[editIdx]={
-    kanji, meaning,
-    reading:   $('e-reading').value.trim()||'—',
-    jlpt:      $('e-jlpt').value,
-    onyomi:    $('e-onyomi').value.trim()||'—',
-    kunyomi:   $('e-kunyomi').value.trim()||'—',
-    exampleJp: $('e-exjp').value.trim()||'—',
-    exampleNp: $('e-exnp').value.trim()||'—',
-  };
-  deck=[...masterDeck]; saveDeck();
-  if(currentIdx<deck.length) renderCard();
-  renderList(); closeEditModal();
-  toast('✅ Card updated!');
-}
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  }
 
-/* ════════════════════════════════════
-   TOAST & HAPTIC
-════════════════════════════════════ */
-let tTimer;
-function toast(msg) {
-  const el=$('toast'); el.textContent=msg; el.classList.add('show');
-  clearTimeout(tTimer); tTimer=setTimeout(()=>el.classList.remove('show'),2000);
-}
-function hap(){ if(navigator.vibrate) navigator.vibrate(8); }
-
-/* ════════════════════════════════════
-   EVENTS
-════════════════════════════════════ */
-cardContainer.addEventListener('click', flipCard);
-document.addEventListener('keydown', e=>{
-  if($('settingsOverlay').classList.contains('visible')) return;
-  if(e.key==='ArrowRight') navigate(1);
-  else if(e.key==='ArrowLeft') navigate(-1);
-  else if(e.key===' '||e.key==='Enter'){e.preventDefault();flipCard();}
-  else if(e.key==='s') shuffle();
-});
-let tx=0,ty=0;
-cardContainer.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
-cardContainer.addEventListener('touchend',e=>{
-  const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
-  if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40) navigate(dx<0?1:-1);
-  else if(Math.abs(dx)<10&&Math.abs(dy)<10) flipCard();
-},{passive:true});
-
-/* ════════════════════════════════════
-   INIT
-════════════════════════════════════ */
-loadState(); renderCard();
+  init();
 </script>
 </body>
 </html>
