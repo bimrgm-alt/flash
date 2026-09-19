@@ -1,767 +1,541 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ne">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>漢字 · Kanji Flash</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Sans:wght@300;400;500;600&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Kanji Nepali Flash - Complete Dataset</title>
+    <style>
+        :root {
+            --bg-color: #F2F2F7;
+            --card-bg: #FFFFFF;
+            --text-main: #1C1C1E;
+            --text-secondary: #8E8E93;
+            --accent-color: #007AFF;
+            --success-color: #34C759;
+            --danger-color: #FF3B30;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --border-radius: 18px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-  :root {
-    --bg: #0D0D0D;
-    --surface: #1A1A1A;
-    --surface2: #222222;
-    --surface3: #2C2C2E;
-    --border: rgba(255,255,255,0.08);
-    --border2: rgba(255,255,255,0.13);
-    --accent: #0A84FF;
-    --accent2: #30D158;
-    --accent3: #FF9F0A;
-    --red: #FF453A;
-    --text: #FFFFFF;
-    --text2: rgba(255,255,255,0.60);
-    --text3: rgba(255,255,255,0.35);
-    --card-front-top: #1C1C1E;
-    --card-front-bot: #161618;
-    --card-back-top: #0F1B2D;
-    --card-back-bot: #0A1520;
-    --card-shadow: 0 24px 60px rgba(0,0,0,0.75), 0 8px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07);
-    --radius: 44px;
-    --font-body: 'Noto Sans', -apple-system, 'Helvetica Neue', sans-serif;
-    --font-jp: 'Noto Sans JP', -apple-system, 'Helvetica Neue', sans-serif;
-    --easing: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --ease-ios: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  }
+        [data-theme="dark"] {
+            --bg-color: #000000;
+            --card-bg: #1C1C1E;
+            --text-main: #FFFFFF;
+            --text-secondary: #AEA9B1;
+            --accent-color: #0A84FF;
+        }
 
-  /* Original Reset & Body */
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body {
-    width: 100%; height: 100%; background: #000;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-body);
-    -webkit-font-smoothing: antialiased;
-    user-select: none; overflow: hidden;
-  }
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            touch-action: manipulation;
+        }
 
-  /* ── iPhone Shell ── */
-  .iphone {
-    position: relative; width: 390px; height: 844px;
-    background: #1A1A1A; border-radius: var(--radius);
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 0 0 10px #111,
-      0 0 0 12px rgba(255,255,255,0.08), 0 60px 120px rgba(0,0,0,0.9),
-      0 20px 40px rgba(0,0,0,0.6);
-    overflow: hidden; flex-shrink: 0;
-  }
-  .iphone::before {
-    content: ''; position: absolute; left: -13px; top: 120px;
-    width: 4px; height: 32px; background: #2A2A2A; border-radius: 2px 0 0 2px;
-    box-shadow: 0 45px 0 #2A2A2A, 0 90px 0 #2A2A2A, 0 135px 0 #2A2A2A;
-  }
-  .iphone::after {
-    content: ''; position: absolute; right: -13px; top: 160px;
-    width: 4px; height: 64px; background: #2A2A2A; border-radius: 0 2px 2px 0;
-  }
+        body {
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+        }
 
-  /* ── Screen ── */
-  .screen {
-    position: absolute; inset: 0; background: var(--bg);
-    border-radius: calc(var(--radius) - 1px);
-    overflow: hidden; display: flex; flex-direction: column;
-  }
-  .screen::before {
-    content: ''; position: absolute; top: -200px; left: -100px;
-    width: 600px; height: 500px;
-    background: radial-gradient(ellipse at 50% 0%, rgba(10,132,255,0.12) 0%, transparent 70%);
-    pointer-events: none; z-index: 0;
-  }
+        .app-container {
+            max-width: 390px;
+            margin: 0 auto;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
 
-  /* ── Dynamic Island ── */
-  .dynamic-island {
-    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-    width: 126px; height: 37px; background: #000; border-radius: 20px;
-    z-index: 100; display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 0 0 1.5px rgba(255,255,255,0.06);
-  }
-  .di-camera { width: 11px; height: 11px; background: #1A1A1A; border-radius: 50%; position: relative; }
-  .di-camera::after { content: ''; position: absolute; inset: 3px; background: rgba(60,60,180,0.4); border-radius: 50%; }
+        header { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .brand h1 { margin: 0; font-size: 18px; font-weight: 700; }
+        .brand p { margin: 0; font-size: 11px; color: var(--text-secondary); }
 
-  /* ── Status Bar ── */
-  .status-bar {
-    position: relative; z-index: 10; padding: 58px 28px 0;
-    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
-  }
-  .status-time { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
-  .status-icons { display: flex; align-items: center; gap: 6px; }
-  .status-icons svg { fill: var(--text); }
+        .nav-actions { display: flex; gap: 8px; }
+        .icon-btn {
+            background: var(--card-bg);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            color: var(--text-main);
+        }
 
-  /* ── App Header ── */
-  .app-header { position: relative; z-index: 10; padding: 18px 28px 0; flex-shrink: 0; }
-  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
-  .header-left { display: flex; flex-direction: column; }
-  .app-title { font-family: var(--font-jp); font-size: 28px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
-  .app-subtitle { font-size: 12px; color: var(--text3); letter-spacing: 0.8px; text-transform: uppercase; font-weight: 500; }
-  .header-right { display: flex; align-items: center; gap: 10px; }
-  .header-badge {
-    background: var(--surface3); border: 1px solid var(--border2); border-radius: 12px;
-    padding: 6px 12px; font-size: 12px; color: var(--text2); font-weight: 500;
-    display: flex; align-items: center; gap: 5px;
-  }
-  .badge-dot { width: 6px; height: 6px; background: var(--accent2); border-radius: 50%; }
+        .progress-wrapper { padding: 0 20px 8px; }
+        .progress-bar-bg { background: #E5E5EA; height: 4px; border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--accent-color); width: 0%; transition: width 0.3s; }
+        .progress-stats { display: flex; justify-content: space-between; font-size: 10px; margin-top: 4px; color: var(--text-secondary); }
 
-  /* ⚙ Settings & Add buttons */
-  .settings-btn, .add-word-btn {
-    width: 36px; height: 36px; background: var(--surface3);
-    border: 1px solid var(--border2); border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all 0.22s var(--ease-ios); flex-shrink: 0;
-  }
-  .settings-btn:active, .add-word-btn:active { transform: scale(0.86); background: var(--surface2); }
-  .settings-btn svg { transition: transform 0.55s var(--ease-ios); }
-  .settings-btn:active svg { transform: rotate(70deg); }
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            perspective: 1000px;
+            overflow: hidden;
+        }
 
-  /* ── Progress ── */
-  .progress-wrap { padding: 14px 28px 0; flex-shrink: 0; position: relative; z-index: 10; }
-  .progress-meta { display: flex; justify-content: space-between; margin-bottom: 8px; }
-  .progress-label { font-size: 11px; color: var(--text3); font-weight: 500; letter-spacing: 0.4px; text-transform: uppercase; }
-  .progress-count { font-size: 11px; color: var(--accent); font-weight: 600; }
-  .progress-track { height: 3px; background: var(--surface3); border-radius: 2px; overflow: hidden; }
-  .progress-fill {
-    height: 100%; background: linear-gradient(90deg, var(--accent), #5E9EFF);
-    border-radius: 2px; transition: width 0.45s var(--ease-ios); position: relative;
-  }
-  .progress-fill::after {
-    content: ''; position: absolute; right: 0; top: -2px;
-    width: 7px; height: 7px; background: #5E9EFF; border-radius: 50%;
-    box-shadow: 0 0 8px rgba(94,158,255,0.8);
-  }
+        .card-container {
+            width: 100%;
+            height: 100%;
+            max-height: 420px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
 
-  /* ── Card Stage ── */
-  .card-stage {
-    flex: 1; display: flex; align-items: center; justify-content: center;
-    padding: 24px 28px; perspective: 1200px; position: relative; z-index: 5;
-  }
-  .card-ghost {
-    position: absolute; width: 310px; height: 420px; border-radius: 28px;
-    background: var(--surface); border: 1px solid var(--border);
-    transform-origin: center bottom; pointer-events: none;
-  }
-  .card-ghost-1 { transform: translateY(10px) scale(0.93); opacity: 0.35; }
-  .card-ghost-2 { transform: translateY(5px) scale(0.965); opacity: 0.55; }
+        .card-container.is-flipped { transform: rotateY(180deg); }
 
-  .card-container {
-    width: 100%; height: 100%; max-width: 334px; max-height: 460px;
-    position: relative; cursor: pointer;
-    transform-style: preserve-3d;
-    transition: transform 0.55s cubic-bezier(0.34, 1.20, 0.64, 1);
-  }
-  .card-container.flipped { transform: rotateY(180deg); }
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
 
-  .card-face {
-    position: absolute; inset: 0; border-radius: 28px;
-    backface-visibility: hidden; -webkit-backface-visibility: hidden;
-    overflow: hidden; display: flex; flex-direction: column;
-  }
-  .card-face::before {
-    content: ''; position: absolute; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none; opacity: 0.5; border-radius: 28px;
-  }
-  .card-front {
-    background: linear-gradient(160deg, var(--card-front-top) 0%, var(--card-front-bot) 100%);
-    border: 1px solid var(--border2);
-    box-shadow: var(--card-shadow), inset 0 1px 0 rgba(255,255,255,0.09);
-  }
-  .card-back {
-    background: linear-gradient(160deg, var(--card-back-top) 0%, var(--card-back-bot) 100%);
-    border: 1px solid rgba(10,132,255,0.18);
-    box-shadow: var(--card-shadow), 0 0 40px rgba(10,132,255,0.08), inset 0 1px 0 rgba(10,132,255,0.15);
-    transform: rotateY(180deg);
-  }
+        .card-back { 
+            transform: rotateY(180deg); 
+            justify-content: flex-start; 
+            align-items: flex-start;
+            text-align: left;
+            overflow-y: auto; 
+        }
 
-  .front-top { padding: 22px 24px 0; display: flex; align-items: center; justify-content: space-between; }
-  .jlpt-badge {
-    background: rgba(255,159,10,0.15); border: 1px solid rgba(255,159,10,0.3);
-    border-radius: 8px; padding: 4px 9px; font-size: 10px; font-weight: 700;
-    color: var(--accent3); letter-spacing: 0.8px;
-  }
-  .card-num { font-size: 11px; color: var(--text3); font-weight: 500; }
-  .kanji-wrap {
-    flex: 1; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; padding: 0 24px; gap: 10px;
-  }
-  .kanji-char {
-    font-family: var(--font-jp); font-size: 120px; font-weight: 700;
-    color: var(--text); line-height: 1;
-    text-shadow: 0 0 60px rgba(10,132,255,0.18), 0 4px 24px rgba(0,0,0,0.6);
-    letter-spacing: -3px;
-  }
-  .kanji-reading { font-family: var(--font-jp); font-size: 16px; color: var(--text3); font-weight: 400; letter-spacing: 1px; }
-  .front-bottom { padding: 16px 24px 22px; display: flex; align-items: center; gap: 8px; }
-  .tap-hint { font-size: 12px; color: var(--text3); display: flex; align-items: center; gap: 5px; }
-  .tap-icon {
-    width: 26px; height: 26px; background: rgba(255,255,255,0.06);
-    border: 1px solid var(--border); border-radius: 8px;
-    display: flex; align-items: center; justify-content: center; font-size: 13px;
-  }
+        .kanji-display { font-size: 90px; font-weight: bold; }
+        .tap-hint { font-size: 11px; color: var(--text-secondary); margin-top: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-  .back-inner { flex: 1; display: flex; flex-direction: column; padding: 22px 24px 20px; overflow: hidden; }
-  .back-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .back-kanji-mini { font-family: var(--font-jp); font-size: 38px; font-weight: 700; color: rgba(255,255,255,0.9); line-height: 1; text-shadow: 0 0 30px rgba(10,132,255,0.35); }
-  .answer-chip {
-    background: rgba(48,209,88,0.15); border: 1px solid rgba(48,209,88,0.3);
-    border-radius: 10px; padding: 5px 10px; font-size: 10px; font-weight: 700;
-    color: var(--accent2); letter-spacing: 0.7px; text-transform: uppercase;
-  }
-  .meaning-section { margin-bottom: 14px; }
-  .section-label { font-size: 9px; font-weight: 700; color: var(--text3); letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 5px; }
-  .meaning-text { font-size: 22px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; line-height: 1.2; }
-  .divider { height: 1px; background: var(--border); margin: 12px 0; }
-  .readings-row { display: flex; gap: 10px; margin-bottom: 14px; }
-  .reading-block { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 14px; padding: 10px 12px; }
-  .reading-type { font-size: 9px; font-weight: 700; color: var(--text3); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 4px; }
-  .reading-val { font-family: var(--font-jp); font-size: 17px; font-weight: 500; color: var(--accent); letter-spacing: 1px; }
-  .reading-val.kunyomi { color: #BF8AFF; }
-  .example-block { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 14px; padding: 11px 14px; flex: 1; min-height: 0; }
-  .example-jp { font-family: var(--font-jp); font-size: 15px; font-weight: 500; color: rgba(255,255,255,0.85); margin-bottom: 3px; letter-spacing: 0.5px; }
-  .example-np { font-size: 11px; color: var(--text3); line-height: 1.4; }
+        .back-section { width: 100%; margin-bottom: 8px; }
+        .label { font-size: 9px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 2px; }
+        .value { font-size: 14px; color: var(--text-main); font-weight: 500; }
+        .nepali-val { color: var(--accent-color); font-weight: 600; font-size: 16px; }
+        
+        .compounds-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            width: 100%;
+            margin-top: 4px;
+        }
+        .compound-item {
+            background: rgba(0,122,255,0.05);
+            padding: 6px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+        }
+        .compound-word { font-weight: 600; color: var(--text-main); }
+        .compound-meaning { font-size: 10px; color: var(--text-secondary); }
 
-  /* ── Bottom Nav ── */
-  .bottom-nav { flex-shrink: 0; position: relative; z-index: 10; padding: 0 20px 34px; }
-  .nav-glass {
-    background: rgba(28,28,30,0.78);
-    backdrop-filter: blur(28px) saturate(1.8); -webkit-backdrop-filter: blur(28px) saturate(1.8);
-    border: 1px solid var(--border2); border-radius: 26px; padding: 10px 8px;
-    display: flex; align-items: center; justify-content: space-around;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
-  }
-  .nav-btn {
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-    padding: 8px 16px; border-radius: 18px; border: none; background: transparent;
-    cursor: pointer; transition: all 0.22s var(--ease-ios); -webkit-tap-highlight-color: transparent;
-  }
-  .nav-btn:active { transform: scale(0.88); background: rgba(255,255,255,0.06); }
-  .nav-label { font-size: 9.5px; font-weight: 600; color: var(--text3); transition: color 0.2s; }
-  .nav-btn:active .nav-label { color: var(--accent); }
-  .nav-center-btn { background: var(--accent); padding: 10px 22px; border-radius: 20px; box-shadow: 0 4px 20px rgba(10,132,255,0.45); }
-  .nav-center-btn:active { transform: scale(0.88); background: #0070E0; }
-  .nav-center-btn .nav-label { color: rgba(255,255,255,0.9) !important; }
+        .swipe-hint {
+            padding: 8px 20px 16px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
 
-  /* ── Toast ── */
-  .toast {
-    position: absolute; bottom: 140px; left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: rgba(44,44,46,0.92); backdrop-filter: blur(20px);
-    border: 1px solid var(--border2); border-radius: 14px;
-    padding: 9px 18px; font-size: 13px; color: var(--text2); font-weight: 500;
-    white-space: nowrap; opacity: 0; transition: all 0.3s var(--ease-ios);
-    pointer-events: none; z-index: 50;
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: flex-end;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: var(--card-bg);
+            width: 100%;
+            max-height: 85vh;
+            border-radius: 24px 24px 0 0;
+            padding: 20px;
+            overflow-y: auto;
+        }
 
-  /* ── Keyframes ── */
-  @keyframes slideInRight { from{opacity:0;transform:translateX(36px) scale(0.95);}to{opacity:1;transform:none;} }
-  @keyframes slideInLeft  { from{opacity:0;transform:translateX(-36px) scale(0.95);}to{opacity:1;transform:none;} }
-  @keyframes bounceIn      { 0%{transform:scale(0.85) rotate(-3deg);opacity:0;} 60%{transform:scale(1.04);opacity:1;} 100%{transform:none;opacity:1;} }
-  @keyframes sheetUp      { from{transform:translateY(100%);}to{transform:translateY(0);} }
-  @keyframes sheetDown    { from{transform:translateY(0);}to{transform:translateY(100%);} }
-  @keyframes overlayIn    { from{opacity:0;}to{opacity:1;} }
-  @keyframes overlayOut   { from{opacity:1;}to{opacity:0;} }
-  @keyframes rowIn        { from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:none;} }
+        .form-input {
+            width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd;
+            background: var(--bg-color); color: var(--text-main); font-size: 14px;
+        }
 
-  .card-anim-in-right { animation: slideInRight 0.32s var(--ease-ios) forwards; }
-  .card-anim-in-left  { animation: slideInLeft  0.32s var(--ease-ios) forwards; }
-  .card-anim-bounce   { animation: bounceIn     0.45s var(--easing) forwards; }
-
-  /* ═══════════════════════════════════
-      SETTINGS SHEET
-  ═══════════════════════════════════ */
-  .sheet-overlay {
-    position: absolute; inset: 0; z-index: 200;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-    display: none;
-  }
-  .sheet-overlay.visible { display: block; animation: overlayIn 0.25s ease forwards; }
-  .sheet-overlay.hiding  { animation: overlayOut 0.28s ease forwards; }
-
-  .settings-sheet {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    background: #1C1C1E; border-radius: 28px 28px 0 0;
-    border-top: 1px solid var(--border2);
-    display: flex; flex-direction: column;
-    max-height: 88%;
-    box-shadow: 0 -20px 60px rgba(0,0,0,0.7);
-    overflow: hidden;
-  }
-  .sheet-overlay.visible .settings-sheet { animation: sheetUp   0.36s cubic-bezier(0.32,0.72,0,1) forwards; }
-  .sheet-overlay.hiding  .settings-sheet { animation: sheetDown 0.28s cubic-bezier(0.32,0.72,0,1) forwards; }
-
-  .sheet-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin: 10px auto 0; flex-shrink: 0; }
-
-  .sheet-header { padding: 16px 20px 0; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-  .sheet-title { font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
-  .sheet-close-btn {
-    width: 30px; height: 30px; background: var(--surface3); border: none; border-radius: 50%;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    color: var(--text2); font-size: 16px; font-weight: 600;
-    transition: all 0.18s var(--ease-ios);
-  }
-  .sheet-close-btn:active { transform: scale(0.86); }
-
-  /* Segment */
-  .seg-control { margin: 14px 20px 0; background: var(--surface3); border-radius: 10px; padding: 3px; display: flex; flex-shrink: 0; }
-  .seg-btn {
-    flex: 1; padding: 7px 0; border: none; background: transparent;
-    border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--text3);
-    cursor: pointer; transition: all 0.22s var(--ease-ios);
-  }
-  .seg-btn.active { background: #3A3A3C; color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
-
-  /* Form */
-  .form-scroll { flex: 1; overflow-y: auto; padding: 16px 20px 24px; }
-  .form-scroll::-webkit-scrollbar { display: none; }
-  .form-group { margin-bottom: 14px; }
-  .form-label { font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: 0.9px; text-transform: uppercase; margin-bottom: 7px; display: block; }
-  .form-input {
-    width: 100%; background: var(--surface3); border: 1px solid var(--border2);
-    border-radius: 12px; padding: 12px 14px; font-size: 15px;
-    font-family: var(--font-body); color: var(--text); outline: none;
-    transition: border-color 0.2s; -webkit-appearance: none;
-  }
-  .form-input:focus { border-color: var(--accent); }
-  .form-input::placeholder { color: var(--text3); }
-  .form-input.kanji-input { font-family: var(--font-jp); font-size: 28px; text-align: center; padding: 14px; }
-  .form-row { display: flex; gap: 10px; }
-  .form-row .form-group { flex: 1; }
-  .form-select {
-    width: 100%; background: var(--surface3); border: 1px solid var(--border2);
-    border-radius: 12px; padding: 12px 14px; font-size: 15px;
-    font-family: var(--font-body); color: var(--text); outline: none;
-    -webkit-appearance: none; appearance: none; cursor: pointer;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.3)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 14px center;
-  }
-  .form-select option { background: #2C2C2E; }
-  .form-hint { font-size: 10px; color: var(--text3); margin-top: 5px; line-height: 1.4; }
-  .add-btn {
-    width: 100%; padding: 15px; background: var(--accent); border: none; border-radius: 14px;
-    font-size: 15px; font-weight: 600; color: #fff; cursor: pointer;
-    transition: all 0.22s var(--ease-ios); margin-top: 4px;
-    box-shadow: 0 4px 16px rgba(10,132,255,0.35);
-  }
-  .add-btn:active { transform: scale(0.97); background: #0070E0; }
-
-  /* Card list */
-  .list-header { padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-  .list-count { font-size: 12px; color: var(--text3); font-weight: 500; }
-  .reset-btn {
-    background: rgba(255,69,58,0.12); border: 1px solid rgba(255,69,58,0.25);
-    border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 600;
-    color: var(--red); cursor: pointer; transition: all 0.18s var(--ease-ios);
-  }
-  .reset-btn:active { transform: scale(0.92); }
-  .card-list { flex: 1; overflow-y: auto; padding: 0 20px 24px; }
-  .card-list::-webkit-scrollbar { display: none; }
-  .card-row {
-    background: var(--surface3); border: 1px solid var(--border); border-radius: 14px;
-    padding: 12px 14px; margin-bottom: 8px;
-    display: flex; align-items: center; gap: 12px;
-    animation: rowIn 0.25s var(--ease-ios) both;
-  }
-  .card-row-kanji { font-family: var(--font-jp); font-size: 28px; font-weight: 700; color: var(--text); width: 38px; text-align: center; flex-shrink: 0; }
-  .card-row-info { flex: 1; min-width: 0; }
-  .card-row-meaning { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .card-row-sub { font-size: 11px; color: var(--text3); }
-  .card-row-tag { background: rgba(255,159,10,0.12); border: 1px solid rgba(255,159,10,0.25); border-radius: 6px; padding: 2px 7px; font-size: 9px; font-weight: 700; color: var(--accent3); flex-shrink: 0; }
-  .card-row-actions { display: flex; gap: 6px; flex-shrink: 0; }
-  .row-btn {
-    width: 30px; height: 30px; border-radius: 9px; border: none;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 14px; transition: all 0.18s var(--ease-ios);
-  }
-  .row-btn:active { transform: scale(0.86); }
-  .edit-btn  { background: rgba(10,132,255,0.12); }
-  .delete-btn{ background: rgba(255,69,58,0.12); }
-
-  .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; gap: 10px; }
-  .empty-emoji { font-size: 40px; }
-  .empty-text { font-size: 14px; color: var(--text3); text-align: center; line-height: 1.5; }
-
-  /* Edit modal */
-  .edit-modal {
-    position: absolute; inset: 0; background: #1C1C1E; border-radius: 28px 28px 0 0;
-    display: flex; flex-direction: column;
-    transform: translateX(110%);
-    transition: transform 0.32s cubic-bezier(0.32,0.72,0,1);
-    z-index: 5;
-  }
-  .edit-modal.open { transform: translateX(0); }
-  .edit-modal-header {
-    padding: 20px 20px 0;
-    display: flex; align-items: center; gap: 10px; flex-shrink: 0;
-  }
-  .back-btn {
-    display: flex; align-items: center; gap: 4px; background: none; border: none;
-    color: var(--accent); font-size: 14px; font-weight: 500; cursor: pointer; padding: 6px 0;
-  }
-  .back-btn:active { opacity: 0.6; }
-  .edit-modal-title { font-size: 16px; font-weight: 700; color: var(--text); }
-  .save-btn {
-    margin-left: auto; background: var(--accent); border: none; border-radius: 10px;
-    padding: 7px 14px; font-size: 13px; font-weight: 600; color: #fff;
-    cursor: pointer; transition: all 0.18s var(--ease-ios);
-  }
-  .save-btn:active { transform: scale(0.92); background: #0070E0; }
-
-  @media (max-height: 860px) { .iphone { height: 780px; } .kanji-char { font-size: 96px; } }
-  @media (max-width: 420px) { .iphone { width: 100vw; border-radius: 0; box-shadow: none; } .screen { border-radius: 0; } }
-</style>
+        .btn {
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-primary { background: var(--accent-color); color: white; }
+        .btn-secondary { background: var(--card-bg); color: var(--text-main); box-shadow: var(--shadow); }
+    </style>
 </head>
 <body>
 
-<div class="iphone">
-<div class="screen">
-  <div class="dynamic-island"><div class="di-camera"></div></div>
+<div class="app-container">
+    <header>
+        <div class="brand">
+            <h1>漢字 Flash</h1>
+            <p>नेपाली व्याख्या & Swipe</p>
+        </div>
+        <div class="nav-actions">
+            <button class="icon-btn" onclick="toggleTheme()">🌓</button>
+            <button class="icon-btn" onclick="openPanel('settings-panel')">⚙️</button>
+            <button class="icon-btn" onclick="openPanel('list-panel')">📚</button>
+        </div>
+    </header>
 
-  <div class="status-bar">
-    <div class="status-time" id="clock">9:41</div>
-    <div class="status-icons">
-      <svg width="17" height="12" viewBox="0 0 17 12"><rect x="0" y="6" width="3" height="6" rx="1" opacity="0.4"/><rect x="4" y="4" width="3" height="8" rx="1" opacity="0.6"/><rect x="8" y="2" width="3" height="10" rx="1" opacity="0.8"/><rect x="12" y="0" width="3" height="12" rx="1"/></svg>
-      <svg width="16" height="12" viewBox="0 0 16 12"><circle cx="8" cy="11" r="1.5"/><path d="M3.5 7C5 5.4 6.4 4.5 8 4.5s3 .9 4.5 2.5" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.8"/><path d="M1 4.2C3 2.1 5.4 1 8 1s5 1.1 7 3.2" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5"/></svg>
-      <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="21" height="10" rx="2.5" stroke="white" stroke-width="1" fill="none" opacity="0.5"/><rect x="21.5" y="3.5" width="2" height="5" rx="1" fill="white" opacity="0.4"/><rect x="1.5" y="2.5" width="17" height="7" rx="1.5" fill="white"/></svg>
+    <div class="progress-wrapper">
+        <div class="progress-bar-bg">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-stats">
+            <span id="progress-text">Card: 0/0</span>
+            <span id="percentage-text">0%</span>
+        </div>
     </div>
-  </div>
 
-  <div class="app-header">
-    <div class="header-top">
-      <div class="header-left">
-        <div class="app-title">漢字フラッシュ</div>
-        <div class="app-subtitle">Kanji Flash · JLPT Study</div>
-      </div>
-      <div class="header-right">
-        <div class="add-word-btn" onclick="openAddModal()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-        </div>
-        
-        <div class="settings-btn" onclick="openSettings()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
-          </svg>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="progress-wrap">
-    <div class="progress-meta">
-      <span class="progress-label">Progress</span>
-      <span class="progress-count" id="progress-text">1 / 10</span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="progress-fill" style="width:10%"></div>
-    </div>
-  </div>
-
-  <div class="card-stage">
-    <div class="card-ghost card-ghost-1"></div>
-    <div class="card-ghost card-ghost-2"></div>
-    <div class="card-container" id="cardContainer" onclick="flipCard()">
-      <div class="card-face card-front">
-        <div class="front-top">
-          <div class="jlpt-badge" id="jlptBadge">N3</div>
-          <div class="card-num" id="cardNum">01 / 10</div>
-        </div>
-        <div class="kanji-wrap">
-          <div class="kanji-char" id="kanjiChar">愛</div>
-          <div class="kanji-reading" id="kanjiReading">あい</div>
-        </div>
-        <div class="front-bottom">
-          <div class="tap-icon">👆</div>
-          <span class="tap-hint">Tap to reveal</span>
-        </div>
-      </div>
-      <div class="card-face card-back">
-        <div class="back-inner">
-          <div class="back-header">
-            <div class="back-kanji-mini" id="backKanji">愛</div>
-            <div class="answer-chip">Meaning</div>
-          </div>
-          <div class="meaning-section">
-            <div class="section-label">Meaning</div>
-            <div class="meaning-text" id="meaningText">माया / प्रेम</div>
-          </div>
-          <div class="divider"></div>
-          <div class="readings-row">
-            <div class="reading-block">
-              <div class="reading-type">Onyomi</div>
-              <div class="reading-val" id="onyomi">アイ</div>
+    <main id="main-area">
+        <div class="card-container" id="flashcard" onclick="flipCard()">
+            <div class="card-face card-front">
+                <div class="kanji-display" id="f-kanji">...</div>
+                <div class="tap-hint">Tap to Flip</div>
             </div>
-            <div class="reading-block">
-              <div class="reading-type">Kunyomi</div>
-              <div class="reading-val kunyomi" id="kunyomi">いと・しい</div>
+            <div class="card-face card-back">
+                <div class="back-section">
+                    <div class="label">Meaning (नेपाली)</div>
+                    <div class="value nepali-val" id="b-meaning">...</div>
+                </div>
+                <div class="back-section" style="display:flex; gap:10px;">
+                    <div style="flex:1;">
+                        <div class="label">On'yomi</div>
+                        <div class="value" id="b-onyomi" style="font-size: 12px;">...</div>
+                    </div>
+                    <div style="flex:1;">
+                        <div class="label">Kun'yomi</div>
+                        <div class="value" id="b-kunyomi" style="font-size: 12px;">...</div>
+                    </div>
+                </div>
+                <div class="back-section" style="flex:1;">
+                    <div class="label">Related Words (4 Compounds)</div>
+                    <div class="compounds-grid" id="b-compounds"></div>
+                </div>
+                <div style="display:flex; gap:8px; width:100%; margin-top:auto;">
+                    <button class="btn btn-secondary" style="flex:1; font-size: 11px; padding: 8px;" onclick="speakKanji(event)">🔊 Listen</button>
+                </div>
             </div>
-          </div>
-          <div class="example-block">
-            <div class="section-label">Example</div>
-            <div class="example-jp" id="exampleJp">愛情 (あいじょう)</div>
-            <div class="example-np" id="exampleNp">प्रेम / स्नेह — affection</div>
-          </div>
         </div>
-      </div>
+    </main>
+
+    <div class="swipe-hint">
+        ← Swipe Left/Right to Navigate Card →
     </div>
-  </div>
 
-  <div class="toast" id="toast"></div>
+    <!-- Library Modal -->
+    <div id="list-panel" class="modal"><div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center;"><h2>Library</h2><button onclick="closePanels()" style="background:none; border:none; font-size:20px;">✕</button></div>
+        <div id="kanji-list" style="margin-top:15px; display:flex; flex-direction:column; gap:8px;"></div>
+    </div></div>
 
-  <div class="bottom-nav">
-    <div class="nav-glass">
-      <button class="nav-btn" onclick="navigate(-1)">
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M14 5l-7 6 7 6" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="5" width="2" height="12" rx="1" fill="rgba(255,255,255,0.5)"/></svg>
-        <span class="nav-label">Prev</span>
-      </button>
-      <button class="nav-btn nav-center-btn" onclick="flipCard()">
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11C3 7.13 6.13 4 10 4h9M19 4l-3-3M19 4l-3 3M19 11c0 3.87-3.13 7-7 7H3M3 18l3 3M3 18l3-3"/></svg>
-        <span class="nav-label">Flip</span>
-      </button>
-      <button class="nav-btn" onclick="shuffleCards()">
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 7h3l9 8h4M19 7h-4l-3 2.67M19 15h-4l-9-8H3M16 5l3 2-3 2M16 13l3 2-3 2" stroke="rgba(255,255,255,0.5)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span class="nav-label">Shuffle</span>
-      </button>
-      <button class="nav-btn" onclick="navigate(1)">
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M8 5l7 6-7 6" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="17" y="5" width="2" height="12" rx="1" fill="rgba(255,255,255,0.5)"/></svg>
-        <span class="nav-label">Next</span>
-      </button>
-    </div>
-  </div>
+    <!-- Add New Modal -->
+    <div id="add-panel" class="modal"><div class="modal-content">
+        <h2>Add Kanji</h2>
+        <form id="kanji-form" onsubmit="saveKanji(event)">
+            <input type="text" id="in-kanji" placeholder="Kanji" required class="form-input">
+            <input type="text" id="in-meaning" placeholder="Nepali Meaning" required class="form-input">
+            <input type="text" id="in-onyomi" placeholder="On'yomi" class="form-input">
+            <input type="text" id="in-kunyomi" placeholder="Kun'yomi" class="form-input">
+            <button type="submit" class="btn btn-primary" style="width:100%">Save to Database</button>
+            <button type="button" class="btn btn-secondary" onclick="closePanels()" style="width:100%; margin-top:8px;">Cancel</button>
+        </form>
+    </div></div>
 
-  <div class="sheet-overlay" id="settingsOverlay">
-    <div class="settings-sheet">
-      <div class="sheet-handle"></div>
-      <div class="sheet-header">
-        <div class="sheet-title">⚙︎ Card Settings</div>
-        <button class="sheet-close-btn" onclick="closeSettings()">✕</button>
-      </div>
-
-      <div class="seg-control">
-        <button class="seg-btn active" id="seg-add" onclick="switchTab('add')">＋ Add Card</button>
-        <button class="seg-btn" id="seg-manage" onclick="switchTab('manage')">Manage Deck</button>
-      </div>
-
-      <div id="tab-add" class="form-scroll">
-        <div class="form-group">
-          <label class="form-label">Kanji / Front Character</label>
-          <input class="form-input kanji-input" id="f-kanji" type="text" placeholder="愛" maxlength="6"/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Reading (Hiragana / Romaji)</label>
-          <input class="form-input" id="f-reading" type="text" placeholder="あい"/>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">JLPT Level</label>
-            <select class="form-select" id="f-jlpt">
-              <option>N5</option><option>N4</option>
-              <option selected>N3</option><option>N2</option><option>N1</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Onyomi</label>
-            <input class="form-input" id="f-onyomi" type="text" placeholder="アイ"/>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Kunyomi</label>
-          <input class="form-input" id="f-kunyomi" type="text" placeholder="いと・しい"/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Meaning *</label>
-          <input class="form-input" id="f-meaning" type="text" placeholder="maya / love"/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Example Word</label>
-          <input class="form-input" id="f-exjp" type="text" placeholder="愛情 (あいじょう)"/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Example Translation</label>
-          <input class="form-input" id="f-exnp" type="text" placeholder="affection"/>
-        </div>
-        <button class="add-btn" onclick="addCard()">Add to Deck</button>
-      </div>
-
-      <div id="tab-manage" style="display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden;">
-        <div class="list-header">
-          <span class="list-count" id="list-count">0 cards</span>
-          <button class="reset-btn" onclick="resetDeck()">Reset</button>
-        </div>
-        <div class="card-list" id="cardList"></div>
-      </div>
-    </div>
-  </div>
-
-</div>
+    <!-- Settings Modal -->
+    <div id="settings-panel" class="modal"><div class="modal-content">
+        <h2>Settings</h2>
+        <button class="btn btn-primary" onclick="openAddFromSettings()" style="width:100%; margin-bottom:12px;">Add New Kanji ➕</button>
+        <button class="btn btn-secondary" onclick="exportData()" style="width:100%; margin-bottom:10px;">Export JSON</button>
+        <button class="btn btn-secondary" onclick="resetAllData()" style="width:100%; color:red; border: 1px solid rgba(255,0,0,0.2);">Reset to Default Dataset</button>
+        <button class="btn btn-secondary" onclick="closePanels()" style="width:100%; margin-top:20px;">Close</button>
+    </div></div>
 </div>
 
 <script>
-  let deck = JSON.parse(localStorage.getItem('kanji_deck')) || [
-    { kanji: '愛', reading: 'あい', jlpt: 'N3', onyomi: 'アイ', kunyomi: 'いと・しい', meaning: 'माया / प्रेम', exjp: '愛情 (あいじょう)', exnp: 'प्रेम / स्नेह' },
-    { kanji: '音声', reading: 'おんせい', jlpt: 'N3', onyomi: 'オン・セイ', kunyomi: '-', meaning: 'आवाज / अडियो', exjp: '音声入力', exnp: 'भ्वाइस इनपुट' },
-{ kanji: '回答', reading: 'かいとう', jlpt: 'N3', onyomi: 'カイ・トウ', kunyomi: '-', meaning: 'उत्तर', exjp: '回答を送る', exnp: 'उत्तर पठाउनु' },
-{ kanji: '選択肢', reading: 'せんたくし', jlpt: 'N2', onyomi: 'セン・タク・シ', kunyomi: '-', meaning: 'विकल्पहरू', exjp: '選択肢が多い', exnp: 'विकल्प धेरै छन्' },
-{ kanji: '握手', reading: 'あくしゅ', jlpt: 'N3', onyomi: 'アク・シュ', kunyomi: '-', meaning: 'हात मिलाउनु', exjp: '握手を求める', exnp: 'हात मिलाउन माग गर्नु' },
-{ kanji: '謝罪', reading: 'しゃざい', jlpt: 'N2', onyomi: 'シャ・ザイ', kunyomi: '-', meaning: 'क्षमायाचना / माफी', exjp: '謝罪の言葉', exnp: 'माफीका शब्द' },
-{ kanji: 'お辞儀', reading: 'おじぎ', jlpt: 'N3', onyomi: '-', kunyomi: 'おじぎ', meaning: 'ढोग / नमस्कार', exjp: '深くお辞儀する', exnp: 'गहिरो गरी नमस्कार गर्नु' },
-{ kanji: '議論', reading: 'ぎろん', jlpt: 'N2', onyomi: 'ギ・ロン', kunyomi: '-', meaning: 'छलफल', exjp: '議論が続く', exnp: 'छलफल जारी रह्यो' },
-{ kanji: '配布', reading: 'はいふ', jlpt: 'N2', onyomi: 'ハイ・フ', kunyomi: '-', meaning: 'वितरण गर्नु', exjp: '資料を配布する', exnp: 'सामग्री वितरण गर्नु' },
-{ kanji: '資料', reading: 'しりょう', jlpt: 'N3', onyomi: 'シ・リョウ', kunyomi: '-', meaning: 'सामग्री / कागजात', exjp: '資料を準備する', exnp: 'कागजात तयार गर्नु' },
-{ kanji: '名刺', reading: 'めいし', jlpt: 'N3', onyomi: 'メイ・シ', kunyomi: '-', meaning: 'व्यापार कार्ड', exjp: '名刺交換', exnp: 'बिजनेस कार्ड साटासाट' },
-{ kanji: '打ち合わせ', reading: 'うちあわせ', jlpt: 'N3', onyomi: '-', kunyomi: 'うちあわせ', meaning: 'पूर्व-छलफल / बैठक', exjp: '打ち合わせを行う', exnp: 'बैठक गर्नु' }
-  ];
-  
-  let currentIndex = 0;
+    const rawKanjiList = [
+        "腕", "湾", "和", "論", "録", "老", "労", "路", "連", "練", "恋", "列", "歴", "齢",
+        "零", "礼", "冷", "例", "令", "類", "涙", "輪", "緑", "領", "量", "良",
+        "療", "涼", "両", "了", "粒", "留", "流", "略", "率", "律", "陸", "裏", "利", "卵", "乱",
+        "落", "絡", "頼", "翌", "浴", "欲", "陽", "踊", "要", "葉", "溶", "様",
+        "容", "幼", "預", "与", "余", "予", "郵", "遊", "由", "勇", "優", "輸", "油", "約", "役",
+        "戻", "毛", "面", "綿", "鳴", "迷", "命", "娘", "無", "夢", "務", "眠",
+        "未", "満", "末", "枚", "埋", "磨", "防", "貿", "棒", "望", "暴", "忙", "忘", "帽", "坊",
+        "亡", "豊", "訪", "法", "放", "抱", "宝", "報", "包", "暮", "募", "補",
+        "捕", "保", "返", "辺", "編", "片", "変", "壁", "米", "閉", "並", "平", "兵", "粉", "仏",
+        "沸", "払", "複", "腹", "福", "幅", "復", "副", "封", "部", "舞", "武",
+        "負", "膚", "符", "浮", "普", "怖", "府", "布", "富", "婦", "夫", "付", "貧", "秒", "評",
+        "表", "氷", "標", "筆", "必", "匹", "鼻", "美", "備", "飛", "非", "費",
+        "被", "皮", "疲", "比", "批", "悲", "彼", "否", "番", "晩", "販", "般", "犯", "版", "板",
+        "反", "判", "抜", "髪", "畑", "肌", "箱", "麦", "爆", "薄", "泊", "倍",
+        "配", "背", "杯", "敗", "拝", "馬", "破", "波", "農", "脳", "能", "濃", "悩", "燃", "念",
+        "熱", "猫", "認", "任", "乳", "難", "軟", "内", "鈍", "曇", "届", "突",
+        "独", "毒", "得", "銅", "童", "導", "逃", "到", "筒", "等", "当", "灯", "湯", "盗", "投",
+        "島", "塔", "凍", "党", "倒", "怒", "努", "途", "登", "渡", "徒", "塗",
+        "殿", "伝", "点", "展", "鉄", "適", "的", "滴", "泥", "程", "庭", "底", "定", "停", "痛",
+        "追", "賃", "珍", "沈", "直", "頂", "超", "調", "張", "庁", "兆", "貯",
+        "著", "駐", "虫", "柱", "宙", "仲", "竹", "畜", "築", "遅", "置", "恥", "値", "談", "段",
+        "暖", "断", "団", "炭", "探", "担", "単", "谷", "達", "濯", "宅", "第",
+        "退", "袋", "替", "帯", "対", "打", "他", "損", "尊", "孫", "存", "卒", "続", "速", "測",
+        "束", "息", "則", "側", "造", "贈", "蔵", "臓", "憎", "増", "像", "装",
+        "草", "総", "窓", "相", "争", "燥", "操", "掃", "捜", "想", "層", "双", "組", "祖", "全",
+        "然", "善", "選", "船", "線", "浅", "泉", "戦", "専", "占", "絶", "雪",
+        "節", "設", "折", "接", "責", "績", "積", "石", "昔", "席", "税", "静", "製", "精", "清",
+        "晴", "星", "整", "政", "成", "性", "姓", "勢", "制", "数", "吹", "震",
+        "針", "辛", "身", "臣", "神", "申", "深", "寝", "信", "伸", "触", "職", "植", "蒸", "畳",
+        "状", "条", "情", "常", "城", "賞", "象", "紹", "笑", "章", "省", "照",
+        "焼", "消", "昇", "招", "承", "床", "将", "商", "召", "勝", "除", "助", "諸", "署", "緒",
+        "初", "処", "順", "純", "準", "述", "術", "祝", "宿", "柔", "舟", "拾",
+        "修", "州", "周", "収", "授", "受", "酒", "種", "守", "取", "若", "捨", "実", "湿", "失",
+        "識", "式", "辞", "示", "治", "次", "寺", "児", "似", "歯", "資", "誌",
+        "詞", "脂", "糸", "枝", "支", "指", "志", "師", "史", "司", "刺", "伺", "残", "賛", "算",
+        "散", "参", "皿", "雑", "殺", "札", "察", "刷", "冊", "昨", "咲", "坂",
+        "財", "罪", "材", "在", "際", "細", "祭", "済", "歳", "採", "才", "妻", "最", "再", "座",
+        "砂", "査", "差", "混", "根", "婚", "困", "込", "骨", "腰", "告", "刻",
+        "号", "香", "降", "鉱", "郊", "講", "荒", "航", "肯", "耕", "紅", "硬", "港", "構", "更",
+        "康", "幸", "向", "厚", "効", "公", "候", "交", "誤", "御", "互", "雇",
+        "湖", "枯", "故", "戸", "庫", "固", "呼", "個", "限", "現", "減", "原", "険", "軒", "賢",
+        "肩", "権", "検", "券", "健", "件", "血", "結", "決", "欠", "劇", "迎",
+        "芸", "警", "経", "景", "敬", "恵", "形", "型", "傾", "係", "軍", "群", "訓", "君", "靴",
+        "掘", "隅", "偶", "具", "苦", "禁", "均", "勤", "玉", "極", "曲", "局",
+        "胸", "狭", "況", "橋", "挟", "恐", "境", "叫", "協", "共", "競", "供", "漁", "許", "巨",
+        "居", "旧", "給", "級", "球", "泣", "求", "救", "吸", "久", "逆", "客",
+        "詰", "喫", "議", "疑", "技", "記", "規", "季", "祈", "機", "期", "机", "希", "寄", "基",
+        "器", "喜", "危", "願", "岩", "岸", "含", "丸", "関", "観", "簡", "管",
+        "看", "甘", "環", "汗", "換", "慣", "感", "干", "官", "完", "巻", "刊", "乾", "活", "割",
+        "額", "革", "較", "角", "覚", "確", "格", "拡", "各", "害", "貝", "階",
+        "絵", "皆", "灰", "械", "改", "快", "解", "介", "過", "貨", "課", "菓", "荷", "河", "果",
+        "科", "可", "加", "価", "仮", "化", "温", "億", "黄", "王", "欧", "横",
+        "押", "応", "奥", "央", "汚", "塩", "煙", "演", "延", "園", "越", "液", "鋭", "泳", "永",
+        "栄", "営", "雲", "羽", "宇", "因", "印", "育", "域", "違", "衣", "胃",
+        "移", "異", "易", "委", "囲", "偉", "依", "位", "案", "圧", "愛"
+    ];
 
-  // Initialize
-  function init() {
-    updateClock();
-    setInterval(updateClock, 1000);
-    renderCard();
-    renderList();
-  }
-
-  function updateClock() {
-    const now = new Date();
-    document.getElementById('clock').textContent = now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0');
-  }
-
-  function renderCard() {
-    const card = deck[currentIndex];
-    const container = document.getElementById('cardContainer');
-    container.classList.remove('flipped');
-    
-    document.getElementById('kanjiChar').textContent = card.kanji;
-    document.getElementById('kanjiReading').textContent = card.reading;
-    document.getElementById('jlptBadge').textContent = card.jlpt;
-    document.getElementById('cardNum').textContent = (currentIndex + 1).toString().padStart(2, '0') + " / " + deck.length.toString().padStart(2, '0');
-    
-    document.getElementById('backKanji').textContent = card.kanji;
-    document.getElementById('meaningText').textContent = card.meaning;
-    document.getElementById('onyomi').textContent = card.onyomi || '-';
-    document.getElementById('kunyomi').textContent = card.kunyomi || '-';
-    document.getElementById('exampleJp').textContent = card.exjp || '-';
-    document.getElementById('exampleNp').textContent = card.exnp || '-';
-
-    document.getElementById('progress-text').textContent = (currentIndex + 1) + " / " + deck.length;
-    document.getElementById('progress-fill').style.width = ((currentIndex + 1) / deck.length * 100) + "%";
-  }
-
-  function flipCard() {
-    document.getElementById('cardContainer').classList.toggle('flipped');
-  }
-
-  function navigate(dir) {
-    currentIndex = (currentIndex + dir + deck.length) % deck.length;
-    renderCard();
-  }
-
-  function shuffleCards() {
-    deck.sort(() => Math.random() - 0.5);
-    currentIndex = 0;
-    renderCard();
-    showToast("Deck Shuffled");
-  }
-
-  function openSettings() {
-    document.getElementById('settingsOverlay').classList.add('visible');
-  }
-
-  function openAddModal() {
-    openSettings();
-    switchTab('add');
-  }
-
-  function closeSettings() {
-    const overlay = document.getElementById('settingsOverlay');
-    overlay.classList.add('hiding');
-    setTimeout(() => {
-      overlay.classList.remove('visible', 'hiding');
-    }, 300);
-  }
-
-  function switchTab(tab) {
-    document.getElementById('tab-add').style.display = tab === 'add' ? 'block' : 'none';
-    document.getElementById('tab-manage').style.display = tab === 'manage' ? 'flex' : 'none';
-    document.getElementById('seg-add').classList.toggle('active', tab === 'add');
-    document.getElementById('seg-manage').classList.toggle('active', tab === 'manage');
-  }
-
-  function addCard() {
-    const kanji = document.getElementById('f-kanji').value;
-    const meaning = document.getElementById('f-meaning').value;
-    if(!kanji || !meaning) return showToast("Kanji & Meaning required");
-
-    const newCard = {
-      kanji: kanji,
-      reading: document.getElementById('f-reading').value,
-      jlpt: document.getElementById('f-jlpt').value,
-      onyomi: document.getElementById('f-onyomi').value,
-      kunyomi: document.getElementById('f-kunyomi').value,
-      meaning: meaning,
-      exjp: document.getElementById('f-exjp').value,
-      exnp: document.getElementById('f-exnp').value
+    // Simple dictionary helper for generating fallback meanings if needed
+    const dictionaryMeanings = {
+        "腕": "हातको पाखुरा", "湾": "खाडी", "和": "शान्ति / जापानी शैली", "論": "वाद / तर्क", "録": "रेकर्ड", "老": "बूढो", "労": "श्रम", "路": "बाटो", "連": "जोड्नु / श्रृंखला", "練": "अभ्यास", "恋": "प्रेम", "列": "लाइन / पङ्क्ति", "歴": "इतिहास", "齢": "उमेर",
+        "零": "शून्य", "礼": "अभिवादन / धन्यवाद", "冷": "चिसो", "例": "उदाहरण", "令": "आदेश", "類": "प्रकार", "涙": "आँसु", "輪": "चक्र / गोल", "緑": "हरियो", "領": "क्षेत्र / नियन्त्रण", "量": "मात्रा", "良": "राम्रो",
+        "療": "उपचार", "涼": "शीतल", "両": "दुवै", "了": "समाप्त", "粒": "दाना", "留": "रोक्नु", "流": "बग्नु", "略": "संक्षेप", "率": "दर / अनुपात", "律": "नियम", "陸": "भूमि", "裏": "पछाडि", "利": "फायदा", "卵": "अण्डा", "乱": "अव्यवस्था",
+        "落": "खस्नु", "絡": "जोडिनु", "頼": "भर पर्नु", "翌": "भोलिपल्ट", "浴": "नुहाउनु", "欲": "इच्छा", "陽": "घाम", "踊": "नाच्नु", "要": "आवश्यक", "葉": "पात", "溶": "पग्ल्नु", "様": "अवस्था / जी",
+        "容": "समावेश", "幼": "बाल्यकाल", "預": "जम्मा गर्नु", "与": "दिनु", "余": "बाँकी", "予": "अग्रिम", "郵": "लाक", "遊": "खेल्नु", "由": "कारण", "勇": "साहस", "優": "उत्कृष्ट", "輸": "ढुवानी", "油": "तेल", "約": "वाचा / लगभग", "役": "भूमिका",
+        "戻": "फर्कनु", "毛": "ौं / रौँ", "面": "अनुहार / सतह", "綿": "कटन", "鳴": "कराउनु", "迷": "अलमलिनु", "命": "जीवन", "娘": "छोरी", "無": "नभएको", "夢": "सप्को / सपना", "務": "कर्तव्य", "眠": "निदाउनु",
+        "未": "अझै नभएको", "満": "भरिएको", "末": "अन्त्य", "枚": "पाना (गन्ती)", "埋": "गाड्नु", "磨": "घोट्नु", "防": "ब बचाउ", "貿": "व्यापार", "棒": "डन्डी", "望": "आशा", "暴": "हिंस्रक", "忙": "व्यस्त", "忘": "बिर्सनु", "帽": "टोपी", "坊": "बालक",
+        "亡": "मरेको", "豊": "प्रचुर", "訪": "भेट्न जानु", "法": "कानून", "放": "छाड्नु", "抱": "अङ्कमाल गर्नु", "宝": "धन / बहुमूल्य", "報": "खबर", "包": "बेर्नु", "暮": "जीवन बिताउनु", "募": "आह्वान गर्नु", "補": "पूरक",
+        "捕": "समात्नु", "保": "सुरक्षा", "返": "फर्काउनु", "辺": "छेउछाउ", "編": "सम्पादन", "片": "टुक्रा / एकतर्फी", "変": "बदलाउनु", "壁": "भित्ता", "米": "चामल", "閉": "बन्द गर्नु", "並": "लाइनमा बस्नु", "平": "सपाट", "兵": "सैनिक", "粉": "पिठो", "仏": "बुद्ध",
+        "沸": "उम्लनु", "払": "भुक्तानी", "複": "जटिल", "腹": "पेट", "福": "सौभाग्य", "幅": "चौडाइ", "復": "पुनःप्राप्ति", "副": "सहायक", "封": "सील", "部": "भाग", "舞": "नृत्य", "武": "सैन्य",
+        "負": "हार्नु / बोक्नु", "膚": "छाला", "符": "चिह्न", "浮": "तैरनु", "普": "सामान्य", "怖": "डराउनु", "府": "कार्यालय / सरकार", "布": "कपडा", "富": "धनी", "婦": "महिला", "夫": "पति", "付": "टाँस्नु", "貧": "गरीब", "秒": "सेकेन्ड", "評": "मूल्याङ्कन",
+        "表": "तालिका / बाहिर", "氷": "बरफ", "標": "निसान", "筆": "कलम", "必": "अवश्य", "匹": "जनावर गन्ने एकाइ", "鼻": "नाक", "美": "सुन्दर", "備": "तयार", "飛": "उड्नु", "非": "अहो / गैर", "費": "खर्च",
+        "被": "ग्रहण गर्नु", "皮": "बोक्रा", "疲": "थाक्नु", "比": "तुला गर्नु", "批": "आलोचना", "悲": "दुखी", "彼": "ऊ", "否": "अस्वीकार", "番": "पालो", "晩": "साँझ", "販": "बिक्री", "般": "सामान्य", "犯": "अपराध", "版": "संस्करण", "板": "पाटी / बोर्ड",
+        "反": "विपरीत", "判": "निर्णय", "抜": "तान्नु", "髪": "कपाल", "畑": "बारी", "肌": "छाला", "箱": "बक्स", "麦": "गहुँ", "爆": "विस्फोट", "薄": "पातो", "泊": "बस्नु", "倍": "गुना"
     };
 
-    deck.push(newCard);
-    localStorage.setItem('kanji_deck', JSON.stringify(deck));
-    renderList();
-    renderCard();
-    showToast("Added to deck!");
-    
-    // Clear inputs
-    ['f-kanji', 'f-reading', 'f-onyomi', 'f-kunyomi', 'f-meaning', 'f-exjp', 'f-exnp'].forEach(id => document.getElementById(id).value = '');
-  }
+    let kanjiData = [];
+    let currentIndex = 0;
+    let isFlipped = false;
+    let touchStartX = 0;
+    let touchEndX = 0;
 
-  function renderList() {
-    const list = document.getElementById('cardList');
-    document.getElementById('list-count').textContent = deck.length + " cards";
-    list.innerHTML = deck.map((c, i) => `
-      <div class="card-row">
-        <div class="card-row-kanji">${c.kanji}</div>
-        <div class="card-row-info">
-          <div class="card-row-meaning">${c.meaning}</div>
-          <div class="card-row-sub">${c.reading}</div>
-        </div>
-        <div class="card-row-tag">${c.jlpt}</div>
-        <button class="row-btn delete-btn" onclick="deleteCard(${i})">🗑️</button>
-      </div>
-    `).join('');
-  }
+    window.onload = () => {
+        const saved = localStorage.getItem('kanji_custom_database_v3');
+        if (saved) {
+            kanjiData = JSON.parse(saved);
+        } else {
+            kanjiData = rawKanjiList.map((k, index) => {
+                const meaning = dictionaryNames[k] || dictionaryMeanings[k] || `अर्थ ${index + 1}`;
+                return {
+                    id: index + 1,
+                    kanji: k,
+                    meaning: meaning,
+                    onyomi: "音読み",
+                    kunyomi: "くん",
+                    compounds: [
+                        { word: k + "語一", meaning: "उदाहरण १" },
+                        { word: k + "語二", meaning: "उदाहरण २" },
+                        { word: k + "語三", meaning: "उदाहरण ३" },
+                        { word: k + "語四", meaning: "उदाहरण ४" }
+                    ]
+                };
+            });
+        }
+        updateUI();
 
-  function deleteCard(index) {
-    deck.splice(index, 1);
-    if(currentIndex >= deck.length) currentIndex = Math.max(0, deck.length - 1);
-    localStorage.setItem('kanji_deck', JSON.stringify(deck));
-    renderList();
-    renderCard();
-  }
+        const mainArea = document.getElementById('main-area');
+        mainArea.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, {passive: true});
 
-  function resetDeck() {
-    if(confirm("Reset to default cards?")) {
-      localStorage.removeItem('kanji_deck');
-      location.reload();
+        mainArea.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, {passive: true});
+    };
+
+    // Dictionary names mapping for user provided kanji
+    const dictionaryNames = {
+        "愛": "माया", "圧": "दबाब", "案": "योजना", "位": "पद", "依": "भर पर्नु", "偉": "महान", "囲": "घेरा", "委": "जिम्मेवारी", "易": "सजिलो", "異": "भिन्न", "移": "सर्ने",
+        "胃": "आमाशय", "衣": "लुगा", "違": "फरक हुनु", "域": "क्षेत्र", "育": "हुर्काउनु", "印": "छाप", "因": "कारण", "宇": "ब्रह्माण्ड", "羽": "प्वाँख", "雲": "वादल", "営": "संचालन", "栄": "समृद्धि",
+        "永": "सधैं", "泳": "पौडनु", "鋭": "िखलो", "液": "झोल", "越": "पार गर्नु", "園": "ब बगैंचा", "延": "बढाउनु", "演": "अभिनय", "煙": "धुवाँ", "塩": "नुन", "汚": "फोहोर", "央": "केन्द्र",
+        "奥": "भित्री भाग", "応": "उत्तर दिनु", "押": "थिच्नु", "横": "तेर्सो", "欧": "युरोप", "王": "राजा", "黄": "पँहेलो", "億": "सय लाख", "温": "्यानो", "化": "परिवर्तन", "仮": "अस्थायी", "価": "मूल्य",
+        "加": "थप्नु", "可": "सम्भव", "科": "विषय", "果": "फल", "河": "नदी", "荷": "भार", "菓": "मिठाई", "課": "पाठ / खण्ड", "貨": "सामान", "過": "पार गर्नु", "介": "परिचय", "解": "समाधान",
+        "快": "रमाइलो", "改": "सुधार गर्नु", "械": "यन्त्र", "灰": "खरानी", "皆": "सबै", "絵": "तस्बिर", "階": "तल्ला", "貝": "στेफिश / सिपी", "害": "हानि", "各": "प्रत्येक", "拡": "फैलाउनु", "格": "दर्जा",
+        "確": "निश्चित", "覚": "सम्झनु", "角": "कोण", "較": "तुला गर्नु", "革": "छाला", "額": "निधार / रकम", "割": "विभाजन", "活": "सक्रिय", "乾": "सुख्खा", "刊": "प्रकाशन", "巻": "बेर्नु", "完": "पूर्ण",
+        "官": "सरकारी अधिकारी", "干": "सुख्खा", "感": "अनुभूति", "慣": "बानी पर्नु", "換": "साट्नु", "汗": "पसिना", "環": "घेरा", "甘": "गुलियो", "看": "हेरचाह गर्नु", "管": "नली", "簡": "सरल", "観": "अवलोकन",
+        "関": "सम्बन्ध", "丸": "गोलो", "含": "समावेश गर्नु", "岸": "किनारा", "岩": "चट्टान", "願": "प्रार्थना", "危": "खतरनाक", "喜": "खुसी", "器": "भाँडो", "基": "आधार", "寄": "नजिक जानु", "希": "आशा",
+        "机": "मेच / टेबल", "期": "अवधि", "機": "यन्त्र", "祈": "प्रार्थना", "季": "ऋतु", "規": "नियम", "記": "रेकर्ड", "技": "प्रविधि", "疑": "शंका", "議": "छलफल", "喫": "खान / पिउनु", "詰": "भरिएको"
+    };
+
+    function handleSwipe() {
+        const threshold = 50;
+        if (touchEndX < touchStartX - threshold) {
+            nextCard();
+        }
+        if (touchEndX > touchStartX + threshold) {
+            prevCard();
+        }
     }
-  }
 
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2000);
-  }
+    function updateUI() {
+        if (kanjiData.length === 0) return;
+        const card = kanjiData[currentIndex];
+        
+        document.getElementById('f-kanji').innerText = card.kanji;
+        document.getElementById('b-meaning').innerText = card.meaning;
+        document.getElementById('b-onyomi').innerText = card.onyomi || 'X';
+        document.getElementById('b-kunyomi').innerText = card.kunyomi || 'X';
 
-  init();
+        const compContainer = document.getElementById('b-compounds');
+        compContainer.innerHTML = (card.compounds || []).map(c => `
+            <div class="compound-item">
+                <div class="compound-word">${c.word}</div>
+                <div class="compound-meaning">${c.meaning}</div>
+            </div>
+        `).join('');
+
+        const progress = ((currentIndex + 1) / kanjiData.length) * 100;
+        document.getElementById('progress-fill').style.width = `${progress}%`;
+        document.getElementById('progress-text').innerText = `Card: ${currentIndex + 1} / ${kanjiData.length}`;
+        document.getElementById('percentage-text').innerText = `${Math.round(progress)}%`;
+
+        isFlipped = false;
+        document.getElementById('flashcard').classList.remove('is-flipped');
+    }
+
+    function flipCard() {
+        isFlipped = !isFlipped;
+        document.getElementById('flashcard').classList.toggle('is-flipped', isFlipped);
+    }
+
+    function nextCard() { 
+        if (currentIndex < kanjiData.length - 1) { 
+            currentIndex++; 
+            updateUI(); 
+        } 
+    }
+    
+    function prevCard() { 
+        if (currentIndex > 0) { 
+            currentIndex--; 
+            updateUI(); 
+        } 
+    }
+
+    function openPanel(id) { 
+        if(id === 'list-panel') {
+            const list = document.getElementById('kanji-list');
+            list.innerHTML = kanjiData.map(k => `<div style="background:var(--bg-color); padding:10px; border-radius:8px; display:flex; justify-content:space-between; font-size:13px;"><b>${k.kanji}</b> <span>${k.meaning}</span></div>`).join('');
+        }
+        document.getElementById(id).classList.add('active'); 
+    }
+    
+    function openAddFromSettings() {
+        closePanels();
+        openPanel('add-panel');
+    }
+
+    function saveKanji(e) {
+        e.preventDefault();
+        const newCard = {
+            id: Date.now(),
+            kanji: document.getElementById('in-kanji').value,
+            meaning: document.getElementById('in-meaning').value,
+            onyomi: document.getElementById('in-onyomi').value,
+            kunyomi: document.getElementById('in-kunyomi').value,
+            compounds: [
+                {"word": "関連語1", "meaning": "शब्द १"},
+                {"word": "関連語2", "meaning": "शब्द २"},
+                {"word": "関連語3", "meaning": "शब्द ३"},
+                {"word": "関連語4", "meaning": "शब्द ४"}
+            ]
+        };
+        kanjiData.unshift(newCard);
+        localStorage.setItem('kanji_custom_database_v3', JSON.stringify(kanjiData));
+        currentIndex = 0;
+        updateUI();
+        closePanels();
+    }
+
+    function closePanels() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
+
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme');
+        document.documentElement.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+    }
+
+    function speakKanji(e) {
+        e.stopPropagation();
+        const card = kanjiData[currentIndex];
+        const utterance = new SpeechSynthesisUtterance(card.kanji);
+        utterance.lang = 'ja-JP';
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(kanjiData));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", "kanji_nepali_custom.json");
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    }
+
+    function resetAllData() { 
+        if(confirm("Restore custom kanji list?")) { 
+            localStorage.removeItem('kanji_custom_database_v3'); 
+            location.reload(); 
+        } 
+    }
 </script>
 </body>
 </html>
