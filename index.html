@@ -13,6 +13,7 @@
             --accent-color: #007AFF;
             --success-color: #34C759;
             --danger-color: #FF3B30;
+            --warning-color: #FF9500;
             --shadow: 0 4px 12px rgba(0,0,0,0.08);
             --border-radius: 18px;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -115,23 +116,36 @@
             text-align: center;
         }
 
-        .card-back { 
-            transform: rotateY(180deg); 
+        .card-back {
+            transform: rotateY(180deg);
             -webkit-transform: rotateY(180deg);
-            justify-content: flex-start; 
+            justify-content: flex-start;
             align-items: flex-start;
             text-align: left;
-            overflow-y: auto; 
+            overflow-y: auto;
         }
 
         .kanji-display { font-size: 90px; font-weight: bold; }
         .tap-hint { font-size: 11px; color: var(--text-secondary); margin-top: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
 
+        .badge-incomplete {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: var(--warning-color);
+            color: white;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 4px 9px;
+            border-radius: 10px;
+            letter-spacing: 0.3px;
+        }
+
         .back-section { width: 100%; margin-bottom: 8px; }
         .label { font-size: 9px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 2px; }
         .value { font-size: 14px; color: var(--text-main); font-weight: 500; }
         .nepali-val { color: var(--accent-color); font-weight: 600; font-size: 16px; }
-        
+
         .compounds-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -147,6 +161,7 @@
         }
         .compound-word { font-weight: 600; color: var(--text-main); }
         .compound-meaning { font-size: 10px; color: var(--text-secondary); }
+        .empty-note { font-size: 11px; color: var(--text-secondary); font-style: italic; }
 
         .swipe-hint {
             padding: 8px 20px 16px;
@@ -178,6 +193,10 @@
             width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd;
             background: var(--bg-color); color: var(--text-main); font-size: 14px;
         }
+        .form-input:disabled { opacity: 0.6; }
+
+        .compound-row { display: flex; gap: 6px; margin-bottom: 6px; }
+        .compound-row .form-input { margin-bottom: 0; }
 
         .btn {
             border: none;
@@ -193,6 +212,22 @@
         }
         .btn-primary { background: var(--accent-color); color: white; }
         .btn-secondary { background: var(--card-bg); color: var(--text-main); box-shadow: var(--shadow); }
+
+        .list-item {
+            background: var(--bg-color);
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .list-item .li-left { display: flex; align-items: center; gap: 8px; }
+        .li-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warning-color); flex-shrink: 0; }
+
+        .filter-row { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 4px; color: var(--text-secondary); }
+        .completion-line { font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; }
     </style>
 </head>
 <body>
@@ -206,7 +241,7 @@
         <div class="nav-actions">
             <button class="icon-btn" onclick="toggleTheme()">🌓</button>
             <button class="icon-btn" onclick="openPanel('settings-panel')">⚙️</button>
-            <button class="icon-btn" onclick="openPanel('list-panel')">📚</button>
+            <button class="icon-btn" onclick="openLibrary()">📚</button>
         </div>
     </header>
 
@@ -223,6 +258,7 @@
     <main id="main-area">
         <div class="card-container" id="flashcard" onclick="flipCard()">
             <div class="card-face card-front">
+                <span class="badge-incomplete" id="f-badge" style="display:none;">थप्न बाँकी</span>
                 <div class="kanji-display" id="f-kanji">...</div>
                 <div class="tap-hint">Tap to Flip</div>
             </div>
@@ -241,12 +277,13 @@
                         <div class="value" id="b-kunyomi" style="font-size: 11px;">...</div>
                     </div>
                 </div>
-                <div class="back-section" style="flex:1; overflow-y: auto; max-height: 140px;">
+                <div class="back-section" style="flex:1; overflow-y: auto; max-height: 120px;">
                     <div class="label">Related Words (Compounds)</div>
                     <div class="compounds-grid" id="b-compounds"></div>
                 </div>
                 <div style="display:flex; gap:8px; width:100%; margin-top:8px;">
                     <button class="btn btn-secondary" style="flex:1; font-size: 11px; padding: 6px;" onclick="speakKanji(event)">🔊 Listen</button>
+                    <button class="btn btn-secondary" style="flex:1; font-size: 11px; padding: 6px;" onclick="editCurrentCard(event)">✏️ Edit</button>
                 </div>
             </div>
         </div>
@@ -259,18 +296,42 @@
     <!-- Library Modal -->
     <div id="list-panel" class="modal"><div class="modal-content">
         <div style="display:flex; justify-content:space-between; align-items:center;"><h2>Library</h2><button onclick="closePanels()" style="background:none; border:none; font-size:20px;">✕</button></div>
-        <div id="kanji-list" style="margin-top:15px; display:flex; flex-direction:column; gap:8px;"></div>
+        <div class="completion-line" id="completion-line"></div>
+        <label class="filter-row">
+            <input type="checkbox" id="filter-incomplete" onchange="renderLibrary()">
+            मात्र "थप्न बाँकी" भएका मात्र देखाउनुहोस्
+        </label>
+        <div id="kanji-list" style="margin-top:8px; display:flex; flex-direction:column; gap:8px;"></div>
     </div></div>
 
-    <!-- Add New Modal -->
+    <!-- Add / Edit Modal -->
     <div id="add-panel" class="modal"><div class="modal-content">
-        <h2>Add Kanji</h2>
+        <h2 id="add-panel-title">Add Kanji</h2>
         <form id="kanji-form" onsubmit="saveKanji(event)">
             <input type="text" id="in-kanji" placeholder="Kanji" required class="form-input">
             <input type="text" id="in-meaning" placeholder="Nepali Meaning" required class="form-input">
             <input type="text" id="in-onyomi" placeholder="On'yomi" class="form-input">
             <input type="text" id="in-kunyomi" placeholder="Kun'yomi" class="form-input">
-            <button type="submit" class="btn btn-primary" style="width:100%">Save to Database</button>
+
+            <div class="label" style="margin-bottom:6px;">Compound Words (सम्बन्धित शब्द, ४ सम्म)</div>
+            <div class="compound-row">
+                <input type="text" id="in-comp1-word" placeholder="Word 1 (with reading)" class="form-input">
+                <input type="text" id="in-comp1-mean" placeholder="Meaning" class="form-input">
+            </div>
+            <div class="compound-row">
+                <input type="text" id="in-comp2-word" placeholder="Word 2 (with reading)" class="form-input">
+                <input type="text" id="in-comp2-mean" placeholder="Meaning" class="form-input">
+            </div>
+            <div class="compound-row">
+                <input type="text" id="in-comp3-word" placeholder="Word 3 (with reading)" class="form-input">
+                <input type="text" id="in-comp3-mean" placeholder="Meaning" class="form-input">
+            </div>
+            <div class="compound-row">
+                <input type="text" id="in-comp4-word" placeholder="Word 4 (with reading)" class="form-input">
+                <input type="text" id="in-comp4-mean" placeholder="Meaning" class="form-input">
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width:100%; margin-top:10px;">Save to Database</button>
             <button type="button" class="btn btn-secondary" onclick="closePanels()" style="width:100%; margin-top:8px;">Cancel</button>
         </form>
     </div></div>
@@ -278,8 +339,11 @@
     <!-- Settings Modal -->
     <div id="settings-panel" class="modal"><div class="modal-content">
         <h2>Settings</h2>
+        <div class="completion-line" id="settings-completion-line"></div>
         <button class="btn btn-primary" onclick="openAddFromSettings()" style="width:100%; margin-bottom:12px;">Add New Kanji ➕</button>
         <button class="btn btn-secondary" onclick="exportData()" style="width:100%; margin-bottom:10px;">Export JSON</button>
+        <button class="btn btn-secondary" onclick="triggerImport()" style="width:100%; margin-bottom:10px;">Import JSON ⬆️</button>
+        <input type="file" id="import-file-input" accept=".json,application/json" style="display:none;" onchange="handleImportFile(event)">
         <button class="btn btn-secondary" onclick="confirmResetAllData()" style="width:100%; color:red; border: 1px solid rgba(255,0,0,0.2);">Reset to Default Dataset</button>
         <button class="btn btn-secondary" onclick="closePanels()" style="width:100%; margin-top:20px;">Close</button>
     </div></div>
@@ -296,6 +360,8 @@
 </div>
 
 <script>
+    const STORAGE_KEY = 'kanji_custom_database_v7';
+
     const rawKanjiList = [
         "腕", "湾", "和", "論", "録", "老", "労", "路", "連", "練", "恋", "列", "歴", "齢",
         "零", "礼", "冷", "例", "令", "類", "涙", "輪", "緑", "領", "量", "良",
@@ -409,7 +475,7 @@
         "路": { meaning: "बाटो / सडक", onyomi: "ロ", kunyomi: "みち", compounds: [{ word: "道路 (どうろ)", meaning: "सडक / मार्ग" }, { word: "線路 (せんろ)", meaning: "रेलवे ट्र्याक" }, { word: "通路 (つうろ)", meaning: "आउजाउ गर्ने बाटो" }, { word: "経路 (けいろ)", meaning: "मार्ग / बाटो" }] },
         "連": { meaning: "जोड्नु / सँगै लैजानु", onyomi: "レン", kunyomi: "つ・れる, つら・ねる", compounds: [{ word: "連絡 (れんらく)", meaning: "सम्पर्क" }, { word: "連続 (れんぞく)", meaning: "निरन्तर" }, { word: "連盟 (れんめい)", meaning: "सङ्घ / फेडरेसन" }, { word: "連休 (れんきゅう)", meaning: "लामो छुट्टिको अवधि" }] },
         "練": { meaning: "अभ्यास गर्नु / तिखार्नु", onyomi: "レン", kunyomi: "ね・る", compounds: [{ word: "練習 (れんしゅう)", meaning: "अभ्यास" }, { word: "訓練 (くんれん)", meaning: "तालिम" }, { word: "熟練 (じゅくれん)", meaning: "कुशलता" }, { word: "練乳 (れんにゅう)", meaning: "कनडन्स्ड मिल्क" }] },
-        "恋": { meaning: "प्रेम / माया", onyomi: "レン", kunyomi: "こい, こ・いしい", compounds: [{ word: "恋愛 (れんあい)", meaning: "प्रेम सम्बन्ध" }, { word: "恋人 (こいびโต)", meaning: "प्रेमी / प्रेमिका" }, { word: "恋しい (こいしい)", meaning: "याद आउने / प्रिय" }, { word: "失恋 (しつれん)", meaning: "प्रेममा धोका" }] },
+        "恋": { meaning: "प्रेम / माया", onyomi: "レン", kunyomi: "こい, こ・いしい", compounds: [{ word: "恋愛 (れんあい)", meaning: "प्रेम सम्बन्ध" }, { word: "恋人 (こいびと)", meaning: "प्रेमी / प्रेमिका" }, { word: "恋しい (こいしい)", meaning: "याद आउने / प्रिय" }, { word: "失恋 (しつれん)", meaning: "प्रेममा धोका" }] },
         "列": { meaning: "पङ्क्ति / लाइन", onyomi: "レツ", kunyomi: "", compounds: [{ word: "行列 (ぎょうれつ)", meaning: "लाइन / जुलुस" }, { word: "列車 (れっしゃ)", meaning: "ट्रेन" }, { word: "列島 (れっとう)", meaning: "टापुहरूको समूह" }, { word: "列記 (れっき)", meaning: "सूचीबद्ध गर्नु" }] },
         "歴": { meaning: "इतिहास / पृष्ठभूमि", onyomi: "レキ", kunyomi: "", compounds: [{ word: "歴史 (れきし)", meaning: "इतिहास" }, { word: "経歴 (けいれき)", meaning: "व्यक्तिगत पृष्ठभूमि / बायोडाटा" }, { word: "学歴 (がくれき)", meaning: "शैक्षिक योग्यता" }, { word: "歴代 (れきだい)", meaning: "उत्तराधिकारका पूर्ववर्ती" }] },
         "齢": { meaning: "उमेर", onyomi: "レイ", kunyomi: "よわい", compounds: [{ word: "年齢 (ねんれい)", meaning: "उमेर" }, { word: "高齢 (こうれい)", meaning: "उमेर ढल्किएको" }, { word: "高年齢 (こうねんれい)", meaning: "वृद्ध वर्ग" }, { word: "同齢 (どうれい)", meaning: "उस्तै उमेरको" }] }
@@ -421,52 +487,47 @@
     let touchStartX = 0;
     let touchEndX = 0;
     let confirmCallback = null;
+    let editingId = null; // null = "add new" mode; otherwise the id of the card being edited
+
+    function buildDefaultData() {
+        return rawKanjiList.map((k, index) => {
+            const dictEntry = detailedKanjiDictionary[k];
+            if (dictEntry) {
+                return {
+                    id: index + 1,
+                    kanji: k,
+                    meaning: dictEntry.meaning,
+                    onyomi: dictEntry.onyomi,
+                    kunyomi: dictEntry.kunyomi || '—',
+                    compounds: dictEntry.compounds,
+                    isPlaceholder: false
+                };
+            } else {
+                return {
+                    id: index + 1,
+                    kanji: k,
+                    meaning: '',
+                    onyomi: '',
+                    kunyomi: '',
+                    compounds: [],
+                    isPlaceholder: true
+                };
+            }
+        });
+    }
 
     window.onload = () => {
         try {
-            const saved = localStorage.getItem('kanji_custom_database_v6');
+            const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 kanjiData = JSON.parse(saved);
             } else {
-                kanjiData = rawKanjiList.map((k, index) => {
-                    const dictEntry = detailedKanjiDictionary[k];
-                    if (dictEntry) {
-                        return {
-                            id: index + 1,
-                            kanji: k,
-                            meaning: dictEntry.meaning,
-                            onyomi: dictEntry.onyomi,
-                            kunyomi: dictEntry.kunyomi || '—',
-                            compounds: dictEntry.compounds
-                        };
-                    } else {
-                        return {
-                            id: index + 1,
-                            kanji: k,
-                            meaning: `नेपाली अर्थ (${k})`,
-                            onyomi: "オン",
-                            kunyomi: "くん",
-                            compounds: [
-                                { word: k + "語一", meaning: "उदाहरण १" },
-                                { word: k + "語二", meaning: "उदाहरण २" },
-                                { word: k + "語三", meaning: "उदाहरण ३" },
-                                { word: k + "語四", meaning: "उदाहरण ४" }
-                            ]
-                        };
-                    }
-                });
-                localStorage.setItem('kanji_custom_database_v6', JSON.stringify(kanjiData));
+                kanjiData = buildDefaultData();
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(kanjiData));
             }
         } catch (err) {
             console.error("Storage parsing error, loading default:", err);
-            kanjiData = rawKanjiList.map((k, index) => ({
-                id: index + 1,
-                kanji: k,
-                meaning: `अर्थ (${k})`,
-                onyomi: "オン",
-                kunyomi: "くん",
-                compounds: []
-            }));
+            kanjiData = buildDefaultData();
         }
         updateUI();
 
@@ -483,6 +544,10 @@
         }
     };
 
+    function persist() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(kanjiData));
+    }
+
     function handleSwipe() {
         const threshold = 50;
         if (touchEndX < touchStartX - threshold) {
@@ -496,19 +561,24 @@
     function updateUI() {
         if (kanjiData.length === 0) return;
         const card = kanjiData[currentIndex];
-        
+
         document.getElementById('f-kanji').innerText = card.kanji;
-        document.getElementById('b-meaning').innerText = card.meaning;
+        document.getElementById('f-badge').style.display = card.isPlaceholder ? 'inline-block' : 'none';
+        document.getElementById('b-meaning').innerText = card.meaning || 'थप्न बाँकी';
         document.getElementById('b-onyomi').innerText = card.onyomi || '—';
         document.getElementById('b-kunyomi').innerText = card.kunyomi || '—';
 
         const compContainer = document.getElementById('b-compounds');
-        compContainer.innerHTML = (card.compounds || []).map(c => `
-            <div class="compound-item">
-                <div class="compound-word">${c.word}</div>
-                <div class="compound-meaning">${c.meaning}</div>
-            </div>
-        `).join('');
+        if (card.compounds && card.compounds.length > 0) {
+            compContainer.innerHTML = card.compounds.map(c => `
+                <div class="compound-item">
+                    <div class="compound-word">${c.word}</div>
+                    <div class="compound-meaning">${c.meaning}</div>
+                </div>
+            `).join('');
+        } else {
+            compContainer.innerHTML = '<div class="empty-note">कुनै compound शब्द थपिएको छैन — ✏️ Edit थिच्नुहोस्।</div>';
+        }
 
         const progress = ((currentIndex + 1) / kanjiData.length) * 100;
         document.getElementById('progress-fill').style.width = `${progress}%`;
@@ -524,51 +594,151 @@
         document.getElementById('flashcard').classList.toggle('is-flipped', isFlipped);
     }
 
-    function nextCard() { 
-        if (currentIndex < kanjiData.length - 1) { 
-            currentIndex++; 
-            updateUI(); 
-        } 
-    }
-    
-    function prevCard() { 
-        if (currentIndex > 0) { 
-            currentIndex--; 
-            updateUI(); 
-        } 
+    function nextCard() {
+        if (currentIndex < kanjiData.length - 1) {
+            currentIndex++;
+            updateUI();
+        }
     }
 
-    function openPanel(id) { 
-        if(id === 'list-panel') {
-            const list = document.getElementById('kanji-list');
-            list.innerHTML = kanjiData.map(k => `<div style="background:var(--bg-color); padding:10px; border-radius:8px; display:flex; justify-content:space-between; font-size:13px;"><b>${k.kanji}</b> <span>${k.meaning}</span></div>`).join('');
+    function prevCard() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateUI();
         }
-        document.getElementById(id).classList.add('active'); 
     }
-    
+
+    function completionStats() {
+        const total = kanjiData.length;
+        const done = kanjiData.filter(k => !k.isPlaceholder).length;
+        return { total, done };
+    }
+
+    function openLibrary() {
+        const { total, done } = completionStats();
+        document.getElementById('completion-line').innerText = `पूरा भएका: ${done} / ${total}`;
+        document.getElementById('filter-incomplete').checked = false;
+        renderLibrary();
+        document.getElementById('list-panel').classList.add('active');
+    }
+
+    function renderLibrary() {
+        const onlyIncomplete = document.getElementById('filter-incomplete').checked;
+        const list = document.getElementById('kanji-list');
+        list.innerHTML = kanjiData.map((k, idx) => {
+            if (onlyIncomplete && !k.isPlaceholder) return '';
+            return `<div class="list-item" onclick="jumpToCard(${idx})">
+                <div class="li-left">
+                    ${k.isPlaceholder ? '<span class="li-dot"></span>' : ''}
+                    <b>${k.kanji}</b>
+                </div>
+                <span>${k.isPlaceholder ? 'थप्न बाँकी' : k.meaning}</span>
+            </div>`;
+        }).join('');
+    }
+
+    function jumpToCard(idx) {
+        currentIndex = idx;
+        updateUI();
+        closePanels();
+    }
+
+    function openPanel(id) {
+        if (id === 'settings-panel') {
+            const { total, done } = completionStats();
+            document.getElementById('settings-completion-line').innerText = `पूरा भएका: ${done} / ${total}`;
+        }
+        document.getElementById(id).classList.add('active');
+    }
+
+    function resetAddForm() {
+        document.getElementById('in-kanji').value = '';
+        document.getElementById('in-kanji').disabled = false;
+        document.getElementById('in-meaning').value = '';
+        document.getElementById('in-onyomi').value = '';
+        document.getElementById('in-kunyomi').value = '';
+        for (let i = 1; i <= 4; i++) {
+            document.getElementById(`in-comp${i}-word`).value = '';
+            document.getElementById(`in-comp${i}-mean`).value = '';
+        }
+    }
+
     function openAddFromSettings() {
         closePanels();
+        editingId = null;
+        resetAddForm();
+        document.getElementById('add-panel-title').innerText = 'Add Kanji';
         openPanel('add-panel');
+    }
+
+    function editCurrentCard(e) {
+        e.stopPropagation();
+        const card = kanjiData[currentIndex];
+        if (!card) return;
+        editingId = card.id;
+        resetAddForm();
+        document.getElementById('in-kanji').value = card.kanji;
+        document.getElementById('in-kanji').disabled = true; // keep the kanji itself fixed while editing
+        document.getElementById('in-meaning').value = card.meaning || '';
+        document.getElementById('in-onyomi').value = card.onyomi || '';
+        document.getElementById('in-kunyomi').value = card.kunyomi || '';
+        const comps = card.compounds || [];
+        for (let i = 0; i < 4; i++) {
+            if (comps[i]) {
+                document.getElementById(`in-comp${i + 1}-word`).value = comps[i].word || '';
+                document.getElementById(`in-comp${i + 1}-mean`).value = comps[i].meaning || '';
+            }
+        }
+        document.getElementById('add-panel-title').innerText = `Edit ${card.kanji}`;
+        openPanel('add-panel');
+    }
+
+    function collectCompoundsFromForm() {
+        const compounds = [];
+        for (let i = 1; i <= 4; i++) {
+            const word = document.getElementById(`in-comp${i}-word`).value.trim();
+            const meaning = document.getElementById(`in-comp${i}-mean`).value.trim();
+            if (word && meaning) {
+                compounds.push({ word, meaning });
+            }
+        }
+        return compounds;
     }
 
     function saveKanji(e) {
         e.preventDefault();
-        const newCard = {
-            id: Date.now(),
-            kanji: document.getElementById('in-kanji').value,
-            meaning: document.getElementById('in-meaning').value,
-            onyomi: document.getElementById('in-onyomi').value,
-            kunyomi: document.getElementById('in-kunyomi').value,
-            compounds: [
-                {"word": "関連語1", "meaning": "शब्द १"},
-                {"word": "関連語2", "meaning": "शब्द २"},
-                {"word": "関連語3", "meaning": "शब्द ३"},
-                {"word": "関連語4", "meaning": "शब्द ४"}
-            ]
-        };
-        kanjiData.unshift(newCard);
-        localStorage.setItem('kanji_custom_database_v6', JSON.stringify(kanjiData));
-        currentIndex = 0;
+        const meaning = document.getElementById('in-meaning').value.trim();
+        const onyomi = document.getElementById('in-onyomi').value.trim();
+        const kunyomi = document.getElementById('in-kunyomi').value.trim();
+        const compounds = collectCompoundsFromForm();
+
+        if (editingId !== null) {
+            const idx = kanjiData.findIndex(k => k.id === editingId);
+            if (idx !== -1) {
+                kanjiData[idx].meaning = meaning;
+                kanjiData[idx].onyomi = onyomi;
+                kanjiData[idx].kunyomi = kunyomi;
+                kanjiData[idx].compounds = compounds;
+                kanjiData[idx].isPlaceholder = false;
+                currentIndex = idx;
+            }
+        } else {
+            const kanji = document.getElementById('in-kanji').value.trim();
+            const newCard = {
+                id: Date.now(),
+                kanji: kanji,
+                meaning: meaning,
+                onyomi: onyomi,
+                kunyomi: kunyomi,
+                compounds: compounds,
+                isPlaceholder: false
+            };
+            kanjiData.unshift(newCard);
+            currentIndex = 0;
+        }
+
+        persist();
+        editingId = null;
         updateUI();
         closePanels();
     }
@@ -591,6 +761,104 @@
         } catch(err) {
             console.warn("Speech synthesis not supported or failed:", err);
         }
+    }
+
+    let pendingImportData = null;
+
+    function triggerImport() {
+        document.getElementById('import-file-input').click();
+    }
+
+    function handleImportFile(event) {
+        const file = event.target.files[0];
+        event.target.value = ''; // allow re-selecting the same file later
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            let parsed;
+            try {
+                parsed = JSON.parse(e.target.result);
+            } catch (err) {
+                showCustomConfirm("Import Failed", "यो फाइल मान्य JSON होइन। कृपया सही फाइल छान्नुहोस्।", null);
+                document.getElementById('confirm-ok-btn').style.display = 'none';
+                return;
+            }
+            if (!Array.isArray(parsed)) {
+                showCustomConfirm("Import Failed", "JSON फाइलमा कान्जी entry हरूको array हुनुपर्छ।", null);
+                document.getElementById('confirm-ok-btn').style.display = 'none';
+                return;
+            }
+
+            let matched = 0, added = 0, skipped = 0;
+            parsed.forEach(item => {
+                if (!item || typeof item.kanji !== 'string' || !item.kanji.trim()) {
+                    skipped++;
+                    return;
+                }
+                const exists = kanjiData.some(k => k.kanji === item.kanji);
+                if (exists) matched++; else added++;
+            });
+
+            pendingImportData = parsed;
+            document.getElementById('confirm-ok-btn').style.display = 'flex';
+            showCustomConfirm(
+                "Import JSON",
+                `भेटिएको: ${parsed.length} entries — ${matched} वटा मिल्दा कान्जी अपडेट हुनेछन्, ${added} वटा नयाँ थपिनेछन्${skipped ? `, ${skipped} वटा अमान्य भएर छाडिनेछन्` : ''}। जारी राख्ने?`,
+                applyImport
+            );
+        };
+        reader.onerror = () => {
+            showCustomConfirm("Import Failed", "फाइल पढ्न सकिएन।", null);
+            document.getElementById('confirm-ok-btn').style.display = 'none';
+        };
+        reader.readAsText(file);
+    }
+
+    function normalizeCompounds(compounds) {
+        if (!Array.isArray(compounds)) return [];
+        return compounds
+            .filter(c => c && typeof c.word === 'string' && typeof c.meaning === 'string' && c.word.trim() && c.meaning.trim())
+            .map(c => ({ word: c.word.trim(), meaning: c.meaning.trim() }));
+    }
+
+    function applyImport() {
+        if (!pendingImportData) return;
+
+        pendingImportData.forEach(item => {
+            if (!item || typeof item.kanji !== 'string' || !item.kanji.trim()) return;
+
+            const meaning = typeof item.meaning === 'string' ? item.meaning.trim() : '';
+            const onyomi = typeof item.onyomi === 'string' ? item.onyomi.trim() : '';
+            const kunyomi = typeof item.kunyomi === 'string' ? item.kunyomi.trim() : '';
+            const compounds = normalizeCompounds(item.compounds);
+            const isPlaceholder = typeof item.isPlaceholder === 'boolean' ? item.isPlaceholder : !meaning;
+
+            const idx = kanjiData.findIndex(k => k.kanji === item.kanji);
+            if (idx !== -1) {
+                kanjiData[idx].meaning = meaning || kanjiData[idx].meaning;
+                kanjiData[idx].onyomi = onyomi || kanjiData[idx].onyomi;
+                kanjiData[idx].kunyomi = kunyomi || kanjiData[idx].kunyomi;
+                if (compounds.length > 0) kanjiData[idx].compounds = compounds;
+                kanjiData[idx].isPlaceholder = isPlaceholder;
+            } else {
+                kanjiData.push({
+                    id: Date.now() + Math.floor(Math.random() * 1000),
+                    kanji: item.kanji.trim(),
+                    meaning: meaning,
+                    onyomi: onyomi,
+                    kunyomi: kunyomi,
+                    compounds: compounds,
+                    isPlaceholder: isPlaceholder
+                });
+            }
+        });
+
+        persist();
+        pendingImportData = null;
+        currentIndex = 0;
+        updateUI();
+        closePanels();
     }
 
     function exportData() {
@@ -618,12 +886,12 @@
         confirmCallback = null;
     }
 
-    function confirmResetAllData() { 
+    function confirmResetAllData() {
         showCustomConfirm(
-            "Reset Database", 
-            "Are you sure you want to restore the default kanji list? Any custom additions will be reset.", 
+            "Reset Database",
+            "Are you sure you want to restore the default kanji list? Any custom additions or edits will be reset.",
             () => {
-                localStorage.removeItem('kanji_custom_database_v6'); 
+                localStorage.removeItem(STORAGE_KEY);
                 location.reload();
             }
         );
