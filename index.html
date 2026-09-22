@@ -235,94 +235,166 @@
         .filter-row { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 4px; color: var(--text-secondary); }
         .completion-line { font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; }
 
-        /* Large, screen-fitting study mode */
+        /* Large, iPhone-friendly study mode */
         .card-container {
-            height: min(68vh, 560px);
-            max-height: 560px;
+            height: min(70vh, 590px);
+            max-height: 590px;
+            min-height: 360px;
         }
 
         .card-face {
-            padding: clamp(18px, 5vw, 28px);
+            padding: clamp(18px, 5vw, 30px);
+        }
+
+        .card-front {
+            justify-content: center;
         }
 
         .kanji-display {
-            font-size: clamp(110px, 28vw, 150px);
-            line-height: 1;
+            font-size: clamp(120px, 30vw, 170px);
+            line-height: 0.95;
             font-weight: 800;
         }
 
         .tap-hint {
-            font-size: 13px;
-            margin-top: 18px;
-            letter-spacing: 0.7px;
+            font-size: 14px;
+            margin-top: 20px;
+            letter-spacing: 0.8px;
         }
 
         .card-back {
-            padding: clamp(20px, 5vw, 28px);
+            padding: clamp(18px, 5vw, 28px);
+            gap: 0;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
         }
+        .card-back::-webkit-scrollbar { display: none; }
 
         .back-section {
-            margin-bottom: 12px;
+            width: 100%;
+            margin-bottom: 14px;
+            flex-shrink: 0;
         }
 
         .label {
-            font-size: 11px;
-            margin-bottom: 4px;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            letter-spacing: 0.2px;
         }
 
         .value {
-            font-size: 18px;
-            line-height: 1.35;
+            font-size: 21px;
+            line-height: 1.38;
+            font-weight: 600;
+            word-break: break-word;
         }
 
         .nepali-val {
-            font-size: 23px;
-            line-height: 1.35;
+            font-size: 28px !important;
+            line-height: 1.34;
+            font-weight: 750;
         }
 
-        .card-back .back-section[style*="display:flex"] .value {
-            font-size: 17px !important;
+        /* Readings: override the original small inline font sizes */
+        #b-onyomi,
+        #b-kunyomi {
+            font-size: 22px !important;
             line-height: 1.35;
+            font-weight: 700;
+        }
+
+        .card-back .back-section[style*="display:flex"] {
+            gap: 14px !important;
         }
 
         .card-back .back-section[style*="flex:1"] {
-            max-height: 220px !important;
+            max-height: 240px !important;
+            min-height: 0;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .compounds-grid {
-            gap: 8px;
-            margin-top: 6px;
+            gap: 9px;
+            margin-top: 7px;
         }
 
         .compound-item {
-            padding: 9px 10px;
-            border-radius: 10px;
-            font-size: 15px;
+            padding: 11px 12px;
+            border-radius: 11px;
+            font-size: 18px;
+            line-height: 1.28;
+        }
+
+        .compound-word {
+            font-size: 19px;
+            font-weight: 750;
             line-height: 1.25;
         }
 
         .compound-meaning {
-            font-size: 13px;
-            line-height: 1.3;
-            margin-top: 2px;
+            font-size: 16px;
+            line-height: 1.35;
+            margin-top: 3px;
         }
 
         .empty-note {
-            font-size: 13px;
-            line-height: 1.4;
+            font-size: 15px;
+            line-height: 1.45;
         }
 
         .card-back .btn {
-            font-size: 14px !important;
-            padding: 9px !important;
+            font-size: 15px !important;
+            padding: 10px !important;
+            min-height: 42px;
+        }
+
+        /* One combined menu for Theme + Settings + Library */
+        .quick-menu .modal-content {
+            padding: 16px;
+        }
+        .quick-menu-title {
+            margin: 0 0 12px;
+            font-size: 21px;
+        }
+        .quick-menu-btn {
+            width: 100%;
+            min-height: 52px;
+            margin-bottom: 10px;
+            font-size: 17px;
+            justify-content: flex-start;
+            padding: 14px 16px;
+            border-radius: 14px;
+        }
+        .quick-menu-btn:last-child { margin-bottom: 0; }
+
+        @media (max-width: 430px) {
+            .app-container { max-width: 100%; }
+            main { padding: 8px 14px; }
+            .progress-wrapper { padding-left: 14px; padding-right: 14px; }
+            .card-container { height: min(70vh, 590px); }
+            .kanji-display { font-size: clamp(112px, 31vw, 160px); }
+            .nepali-val { font-size: 26px !important; }
+            #b-onyomi, #b-kunyomi { font-size: 21px !important; }
+            .compound-word { font-size: 18px; }
+            .compound-meaning { font-size: 15px; }
         }
 
         @media (max-height: 700px) {
-            .card-container { height: min(62vh, 470px); }
-            .kanji-display { font-size: clamp(96px, 27vw, 125px); }
-            .nepali-val { font-size: 21px; }
-            .value { font-size: 17px; }
-            .card-back .back-section[style*="flex:1"] { max-height: 150px !important; }
+            .card-container { height: min(64vh, 485px); min-height: 320px; }
+            .kanji-display { font-size: clamp(100px, 28vw, 135px); }
+            .card-back { padding: 16px 18px; }
+            .back-section { margin-bottom: 10px; }
+            .label { font-size: 12px; }
+            .nepali-val { font-size: 23px !important; }
+            #b-onyomi, #b-kunyomi { font-size: 19px !important; }
+            .card-back .back-section[style*="flex:1"] { max-height: 145px !important; }
+            .compound-item { padding: 8px 9px; }
+            .compound-word { font-size: 16px; }
+            .compound-meaning { font-size: 14px; }
+            .card-back .btn { min-height: 38px; padding: 8px !important; }
         }
     </style>
 </head>
@@ -335,9 +407,7 @@
             <p>नेपाली व्याख्या & Swipe</p>
         </div>
         <div class="nav-actions">
-            <button class="icon-btn" onclick="toggleTheme()">🌓</button>
-            <button class="icon-btn" onclick="openPanel('settings-panel')">⚙️</button>
-            <button class="icon-btn" onclick="openLibrary()">📚</button>
+            <button class="icon-btn" onclick="openQuickMenu()" aria-label="Menu">☰</button>
         </div>
     </header>
 
@@ -387,6 +457,19 @@
 
     <div class="swipe-hint">
         ← Swipe Left/Right to Navigate Card →
+    </div>
+
+    <!-- Combined menu: Theme + Settings + Library -->
+    <div id="quick-menu" class="modal quick-menu">
+        <div class="modal-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <h2 class="quick-menu-title">Menu</h2>
+                <button onclick="closeQuickMenu()" style="background:none; border:none; font-size:24px; color:var(--text-main); padding:4px;">✕</button>
+            </div>
+            <button class="btn btn-secondary quick-menu-btn" onclick="toggleTheme(); closeQuickMenu();">🌓 Theme</button>
+            <button class="btn btn-secondary quick-menu-btn" onclick="closeQuickMenu(); openPanel('settings-panel');">⚙️ Settings</button>
+            <button class="btn btn-secondary quick-menu-btn" onclick="closeQuickMenu(); openLibrary();">📚 Library</button>
+        </div>
     </div>
 
     <!-- Library Modal -->
@@ -716,6 +799,14 @@
         const total = kanjiData.length;
         const done = kanjiData.filter(k => !k.isPlaceholder).length;
         return { total, done };
+    }
+
+    function openQuickMenu() {
+        document.getElementById('quick-menu').classList.add('active');
+    }
+
+    function closeQuickMenu() {
+        document.getElementById('quick-menu').classList.remove('active');
     }
 
     function openLibrary() {
