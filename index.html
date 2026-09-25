@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ne">
+<html lang="ne" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -45,15 +45,17 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             overflow: hidden;
-            height: 100vh;
-            width: 100vw;
+            height: 100dvh;
+            min-height: 100vh;
+            width: 100%;
             position: fixed;
         }
 
         .app-container {
-            max-width: 390px;
+            max-width: 393px;
             margin: 0 auto;
-            height: 100vh;
+            height: 100dvh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             padding-bottom: env(safe-area-inset-bottom);
@@ -63,7 +65,7 @@
         .brand h1 { margin: 0; font-size: 18px; font-weight: 700; }
         .brand p { margin: 0; font-size: 11px; color: var(--text-secondary); }
 
-        .nav-actions { display: flex; gap: 8px; }
+        .nav-actions { display: flex; gap: 8px; margin-top: 6px; align-items: center; }
         .icon-btn {
             background: var(--card-bg);
             border: none;
@@ -186,6 +188,24 @@
             backdrop-filter: blur(8px);
         }
         .modal.active { display: flex; }
+
+        .modal-left {
+            justify-content: flex-start;
+            align-items: stretch;
+        }
+        .modal-left .modal-content {
+            width: 82%;
+            max-width: 320px;
+            height: 100%;
+            max-height: 100%;
+            border-radius: 0 24px 24px 0;
+            animation: slideInLeft 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes slideInLeft {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+
         .modal-content {
             background: var(--card-bg);
             width: 100%;
@@ -237,8 +257,8 @@
 
         /* Large, iPhone-friendly study mode */
         .card-container {
-            height: min(70vh, 590px);
-            max-height: 590px;
+            height: min(67dvh, 570px);
+            max-height: 570px;
             min-height: 360px;
         }
 
@@ -351,39 +371,23 @@
             min-height: 42px;
         }
 
-        /* One combined menu for Theme + Settings + Library */
-        .quick-menu .modal-content {
-            padding: 16px;
+        /* iPhone 15 / 15 Pro portrait optimization: 393px CSS width */
+        @media (min-width: 390px) and (max-width: 399px) and (min-height: 800px) {
+            .app-container { max-width: 393px; }
+            header { padding-left: 16px; padding-right: 16px; }
+            .progress-wrapper { padding-left: 16px; padding-right: 16px; }
+            main { padding: 8px 16px; }
+            .card-container { height: min(67dvh, 570px); max-height: 570px; }
         }
-        .quick-menu-title {
-            margin: 0 0 12px;
-            font-size: 21px;
-        }
-        .quick-menu-btn {
-            width: 100%;
-            min-height: 52px;
-            margin-bottom: 10px;
-            font-size: 17px;
-            justify-content: flex-start;
-            padding: 14px 16px;
-            border-radius: 14px;
-        }
-        .quick-menu-btn:last-child { margin-bottom: 0; }
 
-        @media (max-width: 430px) {
+        @media (max-width: 389px), (max-height: 799px) {
             .app-container { max-width: 100%; }
-            main { padding: 8px 14px; }
+            main { padding-left: 14px; padding-right: 14px; }
             .progress-wrapper { padding-left: 14px; padding-right: 14px; }
-            .card-container { height: min(70vh, 590px); }
-            .kanji-display { font-size: clamp(112px, 31vw, 160px); }
-            .nepali-val { font-size: 26px !important; }
-            #b-onyomi, #b-kunyomi { font-size: 21px !important; }
-            .compound-word { font-size: 18px; }
-            .compound-meaning { font-size: 15px; }
         }
 
         @media (max-height: 700px) {
-            .card-container { height: min(64vh, 485px); min-height: 320px; }
+            .card-container { height: min(64dvh, 485px); min-height: 320px; }
             .kanji-display { font-size: clamp(100px, 28vw, 135px); }
             .card-back { padding: 16px 18px; }
             .back-section { margin-bottom: 10px; }
@@ -407,7 +411,8 @@
             <p>नेपाली व्याख्या & Swipe</p>
         </div>
         <div class="nav-actions">
-            <button class="icon-btn" onclick="openQuickMenu()" aria-label="Menu">☰</button>
+            <button class="icon-btn" onclick="shuffleCards()" aria-label="Shuffle">🔀</button>
+            <button class="icon-btn" onclick="openPanel('settings-panel')" aria-label="Settings">⚙️</button>
         </div>
     </header>
 
@@ -459,19 +464,6 @@
         ← Swipe Left/Right to Navigate Card →
     </div>
 
-    <!-- Combined menu: Theme + Settings + Library -->
-    <div id="quick-menu" class="modal quick-menu">
-        <div class="modal-content">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <h2 class="quick-menu-title">Menu</h2>
-                <button onclick="closeQuickMenu()" style="background:none; border:none; font-size:24px; color:var(--text-main); padding:4px;">✕</button>
-            </div>
-            <button class="btn btn-secondary quick-menu-btn" onclick="toggleTheme(); closeQuickMenu();">🌓 Theme</button>
-            <button class="btn btn-secondary quick-menu-btn" onclick="closeQuickMenu(); openPanel('settings-panel');">⚙️ Settings</button>
-            <button class="btn btn-secondary quick-menu-btn" onclick="closeQuickMenu(); openLibrary();">📚 Library</button>
-        </div>
-    </div>
-
     <!-- Library Modal -->
     <div id="list-panel" class="modal"><div class="modal-content">
         <div style="display:flex; justify-content:space-between; align-items:center;"><h2>Library</h2><button onclick="closePanels()" style="background:none; border:none; font-size:20px;">✕</button></div>
@@ -516,9 +508,11 @@
     </div></div>
 
     <!-- Settings Modal -->
-    <div id="settings-panel" class="modal"><div class="modal-content">
+    <div id="settings-panel" class="modal modal-left"><div class="modal-content">
         <h2>Settings</h2>
         <div class="completion-line" id="settings-completion-line"></div>
+        <button class="btn btn-secondary" onclick="toggleTheme()" style="width:100%; margin-bottom:10px;">🌓 Theme</button>
+        <button class="btn btn-secondary" onclick="closePanels(); openLibrary();" style="width:100%; margin-bottom:12px;">📚 Library</button>
         <button class="btn btn-primary" onclick="openAddFromSettings()" style="width:100%; margin-bottom:12px;">Add New Kanji ➕</button>
         <button class="btn btn-secondary" onclick="exportData()" style="width:100%; margin-bottom:10px;">Export JSON</button>
         <button class="btn btn-secondary" onclick="triggerImport()" style="width:100%; margin-bottom:10px;">Import JSON ⬆️</button>
@@ -801,14 +795,6 @@
         return { total, done };
     }
 
-    function openQuickMenu() {
-        document.getElementById('quick-menu').classList.add('active');
-    }
-
-    function closeQuickMenu() {
-        document.getElementById('quick-menu').classList.remove('active');
-    }
-
     function openLibrary() {
         const { total, done } = completionStats();
         document.getElementById('completion-line').innerText = `पूरा भएका: ${done} / ${total}`;
@@ -939,6 +925,16 @@
     }
 
     function closePanels() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
+
+    function shuffleCards() {
+        for (let i = kanjiData.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [kanjiData[i], kanjiData[j]] = [kanjiData[j], kanjiData[i]];
+        }
+        currentIndex = 0;
+        document.getElementById('flashcard').classList.remove('is-flipped');
+        updateUI();
+    }
 
     function toggleTheme() {
         const current = document.documentElement.getAttribute('data-theme');
